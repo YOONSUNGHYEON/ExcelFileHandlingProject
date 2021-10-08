@@ -1,0 +1,30 @@
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<link rel="stylesheet" type="text/css" href="css/input.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" async="" src="js/input.js"></script>
+<title>excel file input list</title>
+</head>
+<body>
+	<div class="content">
+	<h2>Excel File Input </h2>
+		<form action="spoutTest.php" method="post" enctype="multipart/form-data">
+			<div class="filebox">
+				<select>
+					<option>기준 상품</option>
+					<option>협력 상품</option>
+				</select>
+				<input type="file" name="file" id="file">
+				<input class="upload-name" value="파일선택"> 
+				<label for="file">찾아보기</label>
+				<button type="submit" name="submit" value="등록">등록</button>
+			</div>
+			
+			
+		</form>
+	</div>
+</body>
+</html>
+

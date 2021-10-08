@@ -1,0 +1,73 @@
+.filebox label, button {
+	display: inline-block;
+	padding: 2px 0px;
+	color: #000;
+	vertical-align: middle;
+	background-color: #8f8f8f99;
+	cursor: pointer;
+	border: 1px solid #8f8f8f99;
+	border-radius: 5px;
+	text-align: center;
+	color: #000;
+}
+.filebox button { 
+	height: 26px;
+	width: 100;
+	font-weight: 1000;
+}
+.filebox label {
+	width: 100;
+
+}
+
+input {
+	width: 500;
+	height: 28px;
+	vertical-align: middle;
+	display: inline-block;
+	border: 2px solid #8f8f8f99;
+	padding: 2px 0px;
+}
+
+select {
+	display: inline-block;
+	width: 150;
+	height: 28px;
+	vertical-align: middle;
+	display: inline-block;
+	border: 2px solid #8f8f8f99;
+	padding: 2px 0px;
+}
+
+h2 {
+	margin : 70px 0px;
+	text-align: center;
+}
+
+.main-layout:after {
+	clear: both;
+	display: block;
+	content: ''
+	
+}
+.main-layout {
+	margin: 20px 5px;
+;
+}
+.layout-left {
+	float: left;
+	width:50%
+}
+
+.layout-right {
+	float: left;
+	width:50%
+}
+
+.content {
+	width: 940px;
+	height: 700px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 150px;
+}
