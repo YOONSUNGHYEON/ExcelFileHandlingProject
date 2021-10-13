@@ -1,7 +1,7 @@
 <?php
 class CooperationProduct {
-	private $nCooperationProductSeq;
-	private $nCooperationCompanySeq;
+	private $sCooperationProductSeq;
+	private $sCooperationCompanySeq;
 	private $nCategorySeq;
 	private $sName;
 	private $sURL;
@@ -9,9 +9,9 @@ class CooperationProduct {
 	private $nMobilePrice;
 	private $dtInputDate;
 	
-	function __construct($nCooperationProductSeq, $nCooperationCompanySeq, $nCategorySeq, $sName, $sURL, $nPrice, $nMobilePrice) {
-		$this->nCooperationProductSeq=$nCooperationProductSeq;
-		$this->nCooperationCompanySeq=$nCooperationCompanySeq;
+	function __construct($sCooperationProductSeq, $sCooperationCompanySeq, $nCategorySeq, $sName, $sURL, $nPrice, $nMobilePrice) {
+		$this->sCooperationProductSeq=$sCooperationProductSeq;
+		$this->sCooperationCompanySeq=$sCooperationCompanySeq;
 		$this->nCategorySeq=$nCategorySeq;
 		$this->sName=$sName;
 		$this->sURL=$sURL;
@@ -20,10 +20,10 @@ class CooperationProduct {
 	}
 	
 	public function getCooperationProductSeq() {
-		return $this->nCooperationProductSeq;
+		return $this->sCooperationProductSeq;
 	}
 	public function getCooperationCompanySeq() {
-		return $this->nCooperationCompanySeq;
+		return $this->sCooperationCompanySeq;
 	}
 	public function getCategorySeq() {
 		return $this->nCategorySeq;

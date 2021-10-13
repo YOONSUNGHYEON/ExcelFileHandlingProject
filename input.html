@@ -9,20 +9,20 @@
 </head>
 <body>
 	<div class="content">
+	<a class="btn" href="output.html">output으로</a>
 	<h2>Excel File Input </h2>
-		<form action="spoutTest.php" method="post" enctype="multipart/form-data">
+		<form  method="post" enctype="multipart/form-data">
 			<div class="filebox">
-				<select>
-					<option>기준 상품</option>
-					<option>협력 상품</option>
+				<select name="productOption">
+					<option value="2">기준 상품</option>
+					<option value="3">협력 상품</option>
 				</select>
 				<input type="file" name="file" id="file">
 				<input class="upload-name" value="파일선택"> 
 				<label for="file">찾아보기</label>
-				<button type="submit" name="submit" value="등록">등록</button>
-			</div>
-			
-			
+				<input type="button" class="btn" id="btn" value="전송" />
+				
+			</div>					
 		</form>
 	</div>
 </body>

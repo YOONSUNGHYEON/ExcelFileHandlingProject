@@ -4,21 +4,21 @@
 <link rel="stylesheet" type="text/css" href="css/main.css" />
 <link rel="stylesheet" type="text/css" href="css/output.css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script type="text/javascript" async="" src="js/input.js"></script>
+<script type="text/javascript" async="" src="js/output.js"></script>
 <title>excel file input list</title>
 </head>
 <body>
+
 	<div class="content">
+		<a class="btn" href="input.html">input으로</a>
 		<h2>Excel File Output</h2>
+
 		<form action="">
 			<div>
-				카테고리 :
-				<select>
+				카테고리 : <select name="categorySelect" id="categorySelect">
 					<option value="none">카테고리</option>
-					<option>기준 상품</option>
-					<option>협력 상품</option>
 				</select>
-				<bottun>검색</bottun>
+				<input type="button" class="btn" id="search-btn" value="검색" />
 			</div>
 			<div class="main-layout">
 				<div class="layout-left">
@@ -27,10 +27,32 @@
 						<option>기준 상품</option>
 						<option>협력 상품</option>
 					</select>
-					<bottun>엑셀 다운로드</bottun>
-					
-					
-					
+					<input type="button" class="btn" value="엑셀 다운로드" />
+					<table border="1">
+						<th>상품 </br>코드
+						</th>
+						<th>카테고리</th>
+						<th>상품 명</th>
+						<th>최저가</th>
+						<th>모바일 </br> 최저가
+						</th>
+						<th>평균가</th>
+						<th>업체 수</th>
+						<tbody id=standardProductTable>
+						</tbody>
+					</table>
+					<div class="pagination">
+						<a class="arrow" href="#"><<</a>
+						<a class="arrow" href="#">&lt;</a>
+						<a href="#">1</a>
+						<a class="active" href="#">2</a>
+						<a href="#">3</a>
+						<a href="#">4</a>
+						<a href="#">5</a>
+						<a class="arrow" href="#">&gt;</a>
+						<a class="arrow" href="#">>></a>
+					</div>
+
 				</div>
 				<div class="layout-right">
 					<select>
@@ -38,10 +60,43 @@
 						<option>기준 상품</option>
 						<option>협력 상품</option>
 					</select>
-					<bottun>엑셀 다운로드</bottun>
+					<input type="button" class="btn" value="엑셀 다운로드" />
+					<table border="1">
+						<th>협력사 명</th>
+						<th>협력사 </br>코드
+						</th>
+						<th>협력사 </br>상품명
+						</th>
+						<th>협력사 </br>URL
+						</th>
+						<th>가격</th>
+						<th>모바일</br>가격
+						</th>
+						<th>입력 일</th>
+						<tr>
+							<!-- 첫번째 줄 시작 -->
+							<td>첫번째 칸</td>
+							<td>두번째 칸</td>
+							<td>첫번째 칸</td>
+							<td>두번째 칸</td>
+							<td>첫번째 칸</td>
+							<td>두번째 칸</td>
+							<td>첫번째 칸</td>
+						</tr>
+					</table>
+					<div class="pagination">
+						<a class="arrow" href="#"><<</a>
+						<a class="arrow" href="#">&lt;</a>
+						<a href="#">1</a>
+						<a class="active" href="#">2</a>
+						<a href="#">3</a>
+						<a href="#">4</a>
+						<a href="#">5</a>
+						<a class="arrow" href="#">&gt;</a>
+						<a class="arrow" href="#">>></a>
+					</div>
 				</div>
 			</div>
-
 		</form>
 	</div>
 </body>

@@ -13,3 +13,10 @@ function save($oCooperationProductDAO) {
 		echo 'Message: ' . $e->getMessage ();
 	}
 }
+function findByCooperationProductSeq($oCooperationProductDAO) {
+    try {
+        $oCooperationProductDAO->findByCooperationProductSeq("694387201");
+    } catch ( Exception $e ) {
+        echo 'Message: ' . $e->getMessage ();
+    }
+}

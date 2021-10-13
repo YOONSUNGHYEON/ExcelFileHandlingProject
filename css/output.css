@@ -1,3 +1,23 @@
 bottun {
 	padding: 2px 10px;
 }
+
+.pagination {
+	 left: 50%;
+  	display: inline-block;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 4px 10px;
+  text-decoration: none;
+}
+
+.pagination a.active {
+  background-color: black;
+  color: #ffffff;
+}
+
+.pagination a:hover:not(.active) {background-color: silver;}
+

@@ -19,4 +19,21 @@ class CategoryDAO {
 		$oPdoStatement->bindValue ( ":sName", $sName );
 		$oPdoStatement->execute ();
 	}
+	
+	public function findAll()
+	{
+	    $sQuery = ' SELECT
+                        *
+                    FROM
+                        tCategory';
+	    
+	    $oPdoStatement = $this->pdo->prepare($sQuery);
+	    $oPdoStatement->execute();
+	    
+	    $aCategory = array();
+	    while ($oCategoryRow = $oPdoStatement->fetch(PDO::FETCH_ASSOC)) {
+	        $aCategory[] = $oCategoryRow;
+	    }
+	    return $aCategory;
+	}
 }

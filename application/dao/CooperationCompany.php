@@ -8,34 +8,30 @@ class CooperationCompanyDAO {
 	}
 
 	// 협력사 추가
-	public function save($nCooperationCompanySeq, $sName) {
+	public function save($sCooperationCompanySeq, $sName) {
 		$sQuery = ' INSERT INTO tCooperationCompany
-                               	(nCooperationCompanySeq,
+                               	(sCooperationCompanySeq,
                                  sName)
-                     VALUES     (:nCooperationCompanySeq,
+                     VALUES     (:sCooperationCompanySeq,
                                  :sName)';
 		$oPdoStatement = $this->pdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":nCooperationCompanySeq", $nCooperationCompanySeq );
+		$oPdoStatement->bindValue ( ":sCooperationCompanySeq", $sCooperationCompanySeq );
 		$oPdoStatement->bindValue ( ":sName", $sName );
 		$oPdoStatement->execute ();
 	}
 	
-	// 게시판 옵션 아이디에 따른 게시판 목록
-	public function findByCooperationCompanySeq($nCooperationCompanySeq) {
+	public function findByCooperationCompanySeq($sCooperationCompanySeq) {
 		$sQuery = ' SELECT
                         *
                     FROM
                         tCooperationCompany 
                     WHERE
-                        nCooperationCompanySeq = :nCooperationCompanySeqs';
+                        sCooperationCompanySeq = :sCooperationCompanySeqs';
 		
 		$oPdoStatement = $this->pdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":nBoardOptionId", $nOptionId );
+		$oPdoStatement->bindValue ( ":sCooperationCompanySeqs", $sCooperationCompanySeq );
 		$oPdoStatement->execute ();
-		$aBoardList = array ();
-		while ( $aBoardRow = $oPdoStatement->fetch ( PDO::FETCH_ASSOC ) ) {
-			$aBoardList [] = $aBoardRow;
-		}
-		return $aBoardList;
+		$oCompany = $oPdoStatement->fetch();
+		return $oCompany;
 	}
 }
