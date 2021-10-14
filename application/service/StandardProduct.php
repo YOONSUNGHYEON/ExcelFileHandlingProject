@@ -56,6 +56,10 @@ class StandardProductService
         return $this->oStandardProductDAO->findListByCategorySeq($nCategorySeq);
     }
     
+    function findAll() {
+    	return $this->oStandardProductDAO->findAll();
+    }
+    
     function testInput($data)
     {
         $data = trim($data);

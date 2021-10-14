@@ -27,4 +27,9 @@ class OutputController
         $aResponse = $this->oStandardProductService->findListByCategorySeq($nCategorySeq);
         return json_encode($aResponse, JSON_PRETTY_PRINT);
     }
+    
+    public function findStandardProductList(){
+    	$aResponse = $this->oStandardProductService->findAll();
+    	return json_encode($aResponse, JSON_PRETTY_PRINT);
+    }
 }

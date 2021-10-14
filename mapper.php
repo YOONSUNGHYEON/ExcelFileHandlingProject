@@ -9,4 +9,6 @@ if ('uploadFile' == $_GET['method']) {
     echo $oOutputController->findCategoryList();
 } else if ('findListByCategorySeq' == $_GET['method']) {
     echo $oOutputController->findListByCategorySeq();
+} else if ('findStandardProductList' == $_GET['method']) {
+	echo $oOutputController->findStandardProductList();
 }

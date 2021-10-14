@@ -4,7 +4,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . '/ExcelFileHandlingProject/application/
 require_once $_SERVER["DOCUMENT_ROOT"] . '/ExcelFileHandlingProject/src/Spout/Autoloader/autoload.php';
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-
+@set_time_limit(0);    
 class CooperationProductService
 {
 
@@ -22,39 +22,41 @@ class CooperationProductService
     {
         $this->oReader->open($sFilePath);
         $aError[] = array();
-        foreach ( $this->oReader->getSheetIterator() as $oSheet) {
-            $count = 1;
-            foreach ($oSheet->getRowIterator() as $oRow) {
-                try {
-                    $aValue = $oRow->toArray();
-                    if ($count == 1) {
-                        if ($aValue[0] != "협력사 명") {
-                            break;
-                        }
-                    } else {
-                        $sCooperationProductSeq = $this->testInput($aValue[2]);
-                        $sCooperationCompanySeq = $this->testInput($aValue[1]);
-                        $nCategorySeq = $this->testInput($aValue[3]);
-                        $sName = $this->testInput($aValue[4]);
-                        $sURL = $this->testInput($aValue[5]);
-                        $nPrice = $this->testInput($aValue[6]);
-                        $nMobilePrice = $this->testInput($aValue[7]);
-                        $oCooperationProduct = $this->oCooperationProductDAO->findByCooperationProductSeq($sCooperationProductSeq);
-                        $oCooperationProduct = new CooperationProduct($sCooperationProductSeq, $sCooperationCompanySeq, $nCategorySeq, 
-                                                                        $sName, $sURL, $nPrice, $nMobilePrice);
-                        if ($oCooperationProduct == null) {
-                            $this->oCooperationProductDAO->save($oCooperationProduct);
-                        } else {
-                            $this->oCooperationProductDAO->update($oCooperationProduct);
-                        }
-                    }
-                    $count ++;
-                } catch (Exception $e) {
-                    //array_push($aError, $sCooperationProductSeq);
-                   return 'Message: ' . $e->getMessage();
-                }
-            }
+        foreach ($this->oReader->getSheetIterator() as $oSheet) {
+        	$count = 1;
+        	foreach ($oSheet->getRowIterator() as $oRow) {
+        		$aValue = $oRow->toArray();
+        		if ($count == 1) {
+        			if ($aValue[0] != "협력사 명") {
+        				break;
+        			}
+        		} else {
+        			try {
+        				$sCooperationProductSeq = $aValue[2];
+        				$sCooperationCompanySeq = $aValue[1];
+        				$nCategorySeq = $aValue[3];
+        				$sName = $aValue[4];
+        				$sURL = $aValue[5];
+        				$nPrice = $aValue[6];
+        				$nMobilePrice = $aValue[7];
+        				$oCooperationProduct = new CooperationProduct($aValue[2], $aValue[1], $aValue[3], $aValue[4], $aValue[5], $aValue[6], $aValue[7]);
+        				$oTempCooperationProduct = $this->oCooperationProductDAO->findByCooperationProductSeq($sCooperationProductSeq);
+        				if ($oTempCooperationProduct == null) {
+        					$this->oCooperationProductDAO->save($oCooperationProduct);
+        				} else {
+        					$this->oCooperationProductDAO->update($oCooperationProduct);
+        				}
+        			} catch (Exception $e) {
+        				array_push($aError, $sCooperationProductSeq);
+        				
+        			}
+        		
+        		}
+        		$count ++;
+        	}
+        	
         }
+        
         $this->oReader->close();
         return $aError;
     }

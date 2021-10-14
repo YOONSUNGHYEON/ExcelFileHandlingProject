@@ -67,6 +67,30 @@ class StandardProductDAO
         }
         return $aStandardProduct;
     }
+    
+    public function findAll($nStartCount, $nLimitCount) {
+    	$sQuery = ' SELECT
+                       SPL.*, CG.sName as "sCategoryName"
+                    FROM
+                        tStandardProductList SPL
+                        LEFT OUTER JOIN tCategory CG ON (SPL.nCategorySeq = CG.nCategorySeq)
+                    ORDER BY
+                        SPL.nStandardProductSeq DESC
+					LIMIT 
+                        :nLimitCount 
+                    OFFSET :nStartCount';
+    	
+    	$oPdoStatement = $this->pdo->prepare($sQuery);
+    	$oPdoStatement->bindValue ( ":nLimitCount", $nLimitCount );
+    	$oPdoStatement->bindValue ( ":nStartCount", $nStartCount );
+    	$oPdoStatement->execute();
+    	
+    	$aStandardProduct = array();
+    	while ($oStandardProductRow = $oPdoStatement->fetch(PDO::FETCH_ASSOC)) {
+    		array_push($aStandardProduct, $oStandardProductRow);
+    	}
+    	return $aStandardProduct;
+    }
 
     public function save($nStandardProductSeq, $nCategorySeq, $sName, $nLowestPrice, $nMobileLowestPrice, $nAveragePrice, $nCooperationCompayCount)
     {
