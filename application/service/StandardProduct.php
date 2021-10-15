@@ -55,27 +55,27 @@ class StandardProductService {
 			}
 		} else if ($sOption == 3) { // 상품 명
 			if ($nOrder == 1) {
-				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderBySeqASC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderByNameASC($aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq);
 			} else {
-				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderBySeqASC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderByNameDESC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
 			}
 		} else if ($sOption == 4) { // 최저가
 			if ($nOrder == 1) {
-				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderBySeqASC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderByLowestPriceASC( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
 			} else {
-				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderBySeqASC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderByLowestPriceDESC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
 			}
 		} else if ($sOption == 5) { // 모바일 최저가
 			if ($nOrder == 1) {
-				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderBySeqASC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderByMobileLowestPriceASC($aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
 			} else {
-				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderBySeqASC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderByMobileLowestPriceDESC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
 			}
 		} else if ($sOption == 7) { // 업체 수
 			if ($nOrder == 1) {
-				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderBySeqASC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderByCooperationCompayCountASC( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
 			} else {
-				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderBySeqASC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+				$aStandardProduct = $this->oStandardProductDAO->findByCategorySeqOrderByCooperationCompayCountDESC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
 			}
 		}
 		$aStandardProduct ['nCurrentCount'] = count ( $aStandardProduct );
