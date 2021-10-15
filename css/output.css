@@ -3,21 +3,65 @@ bottun {
 }
 
 .pagination {
-	 left: 50%;
-  	display: inline-block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	display: inline-block;
 }
 
 .pagination a {
-  color: black;
-  float: left;
-  padding: 4px 10px;
-  text-decoration: none;
+	color: black;
+	float: left;
+	padding: 4px 10px;
+	text-decoration: none;
+	font-size: 11px;
 }
 
 .pagination a.active {
-  background-color: black;
-  color: #ffffff;
+	background-color: black;
+	color: #ffffff;
 }
 
-.pagination a:hover:not(.active) {background-color: silver;}
+.pagination a:hover:not(.active) {
+	background-color: silver;
+}
 
+table {
+	width: 440px;
+	font-size: 13px;
+	border-collapse: collapse;
+	margin-top: 10px;
+}
+table tr {
+	
+}
+table th {
+	background: #6c6c6c;
+	height:50px;
+	color: #ffffff;
+}
+table th a.activeThead {
+	color: #5dbce9;
+}
+table th a {
+	color: white;
+}
+.main-layout:after {
+	clear: both;
+	display: block;
+	content: ''
+}
+
+.main-layout {
+	margin: 20px 5px;
+}
+
+.layout-left {
+	float: left;
+	width: 50%
+}
+
+.layout-right {
+	float: left;
+	width: 50%
+}

@@ -68,16 +68,135 @@ class StandardProductDAO
         return $aStandardProduct;
     }
     
-    public function findAll($nStartCount, $nLimitCount) {
+    public function findByCategorySeqOrderBySeqDESC($nStartCount, $nLimitCount, $nCategorySeq) {
+    	$sQuery = ' SELECT
+                       SPL.*, CG.sName as "sCategoryName"
+                    FROM
+                        tStandardProductList SPL
+                        LEFT OUTER JOIN tCategory CG ON (SPL.nCategorySeq = CG.nCategorySeq)
+					WHERE
+                        CG.nCategorySeq = :nCategorySeq
+                    ORDER BY
+                        SPL.nStandardProductSeq DESC,
+						SPL.sName DESC, 
+						SPL.nLowestPrice DESC, 
+						SPL.nMobileLowestPrice DESC, 
+						SPL.nCooperationCompayCount DESC
+					LIMIT 
+                        :nLimitCount 
+                    OFFSET :nStartCount';
+    	
+    	$oPdoStatement = $this->pdo->prepare($sQuery);
+    	$oPdoStatement->bindValue(":nCategorySeq", $nCategorySeq);
+    	$oPdoStatement->bindValue ( ":nLimitCount", $nLimitCount );
+    	$oPdoStatement->bindValue ( ":nStartCount", $nStartCount );
+    	$oPdoStatement->execute();
+    	
+    	$aStandardProduct = array();
+    	while ($oStandardProductRow = $oPdoStatement->fetch(PDO::FETCH_ASSOC)) {
+    		array_push($aStandardProduct, $oStandardProductRow);
+    	}
+    	return $aStandardProduct;
+    }
+    public function findByCategorySeqOrderBySeqASC($nStartCount, $nLimitCount, $nCategorySeq) {
+    	$sQuery = ' SELECT
+                       SPL.*, CG.sName as "sCategoryName"
+                    FROM
+                        tStandardProductList SPL
+                        LEFT OUTER JOIN tCategory CG ON (SPL.nCategorySeq = CG.nCategorySeq)
+					WHERE
+                        CG.nCategorySeq = :nCategorySeq
+                    ORDER BY
+                        SPL.nStandardProductSeq,
+						SPL.sName,
+						SPL.nLowestPrice,
+						SPL.nMobileLowestPrice,
+						SPL.nCooperationCompayCount
+					LIMIT
+                        :nLimitCount
+                    OFFSET :nStartCount';
+    	
+    	$oPdoStatement = $this->pdo->prepare($sQuery);
+    	$oPdoStatement->bindValue(":nCategorySeq", $nCategorySeq);
+    	$oPdoStatement->bindValue ( ":nLimitCount", $nLimitCount );
+    	$oPdoStatement->bindValue ( ":nStartCount", $nStartCount );
+    	$oPdoStatement->execute();
+    	
+    	$aStandardProduct = array();
+    	while ($oStandardProductRow = $oPdoStatement->fetch(PDO::FETCH_ASSOC)) {
+    		array_push($aStandardProduct, $oStandardProductRow);
+    	}
+    	return $aStandardProduct;
+    }
+    public function findOrderByCooperationCompayCountDESC($nStartCount, $nLimitCount) {
     	$sQuery = ' SELECT
                        SPL.*, CG.sName as "sCategoryName"
                     FROM
                         tStandardProductList SPL
                         LEFT OUTER JOIN tCategory CG ON (SPL.nCategorySeq = CG.nCategorySeq)
                     ORDER BY
-                        SPL.nStandardProductSeq DESC
-					LIMIT 
-                        :nLimitCount 
+						SPL.nCooperationCompayCount DESC
+                        SPL.nStandardProductSeq DESC,
+						SPL.sName DESC,
+						SPL.nLowestPrice DESC,
+						SPL.nMobileLowestPrice DESC,			
+					LIMIT
+                        :nLimitCount
+                    OFFSET :nStartCount';
+    	
+    	$oPdoStatement = $this->pdo->prepare($sQuery);
+    	$oPdoStatement->bindValue ( ":nLimitCount", $nLimitCount );
+    	$oPdoStatement->bindValue ( ":nStartCount", $nStartCount );
+    	$oPdoStatement->execute();
+    	
+    	$aStandardProduct = array();
+    	while ($oStandardProductRow = $oPdoStatement->fetch(PDO::FETCH_ASSOC)) {
+    		array_push($aStandardProduct, $oStandardProductRow);
+    	}
+    	return $aStandardProduct;
+    }
+    
+    public function findOrderByMobileLowestPriceDESC($nStartCount, $nLimitCount) {
+    	$sQuery = ' SELECT
+                       SPL.*, CG.sName as "sCategoryName"
+                    FROM
+                        tStandardProductList SPL
+                        LEFT OUTER JOIN tCategory CG ON (SPL.nCategorySeq = CG.nCategorySeq)
+                    ORDER BY
+						SPL.nMobileLowestPrice DESC,                        
+						SPL.nStandardProductSeq DESC,
+						SPL.sName DESC,
+						SPL.nLowestPrice DESC,						
+						SPL.nCooperationCompayCount DESC
+					LIMIT
+                        :nLimitCount
+                    OFFSET :nStartCount';
+    	
+    	$oPdoStatement = $this->pdo->prepare($sQuery);
+    	$oPdoStatement->bindValue ( ":nLimitCount", $nLimitCount );
+    	$oPdoStatement->bindValue ( ":nStartCount", $nStartCount );
+    	$oPdoStatement->execute();
+    	
+    	$aStandardProduct = array();
+    	while ($oStandardProductRow = $oPdoStatement->fetch(PDO::FETCH_ASSOC)) {
+    		array_push($aStandardProduct, $oStandardProductRow);
+    	}
+    	return $aStandardProduct;
+    }
+    public function findOrderByNameDESC($nStartCount, $nLimitCount) {
+    	$sQuery = ' SELECT
+                       SPL.*, CG.sName as "sCategoryName"
+                    FROM
+                        tStandardProductList SPL
+                        LEFT OUTER JOIN tCategory CG ON (SPL.nCategorySeq = CG.nCategorySeq)
+                    ORDER BY
+						SPL.sName DESC,
+                        SPL.nStandardProductSeq DESC,					
+						SPL.nLowestPrice DESC,
+						SPL.nMobileLowestPrice DESC,
+						SPL.nCooperationCompayCount DESC
+					LIMIT
+                        :nLimitCount
                     OFFSET :nStartCount';
     	
     	$oPdoStatement = $this->pdo->prepare($sQuery);
@@ -92,6 +211,36 @@ class StandardProductDAO
     	return $aStandardProduct;
     }
 
+    
+    
+    public function findOrderByLowestPriceDESC($nStartCount, $nLimitCount) {
+    	$sQuery = ' SELECT
+                       SPL.*, CG.sName as "sCategoryName"
+                    FROM
+                        tStandardProductList SPL
+                        LEFT OUTER JOIN tCategory CG ON (SPL.nCategorySeq = CG.nCategorySeq)
+                    ORDER BY
+						SPL.nLowestPrice DESC,						
+                        SPL.nStandardProductSeq DESC,
+						SPL.sName DESC,
+						SPL.nMobileLowestPrice DESC,
+						SPL.nCooperationCompayCount DESC
+					LIMIT
+                        :nLimitCount
+                    OFFSET :nStartCount';
+    	
+    	$oPdoStatement = $this->pdo->prepare($sQuery);
+    	$oPdoStatement->bindValue ( ":nLimitCount", $nLimitCount );
+    	$oPdoStatement->bindValue ( ":nStartCount", $nStartCount );
+    	$oPdoStatement->execute();
+    	
+    	$aStandardProduct = array();
+    	while ($oStandardProductRow = $oPdoStatement->fetch(PDO::FETCH_ASSOC)) {
+    		array_push($aStandardProduct, $oStandardProductRow);
+    	}
+    	return $aStandardProduct;
+    }
+    
     public function save($nStandardProductSeq, $nCategorySeq, $sName, $nLowestPrice, $nMobileLowestPrice, $nAveragePrice, $nCooperationCompayCount)
     {
         $sQuery = ' INSERT INTO tStandardProductList
@@ -143,5 +292,15 @@ class StandardProductDAO
         $oPdoStatement->bindValue(":nAveragePrice", $nAveragePrice);
         $oPdoStatement->bindValue(":nCooperationCompayCount", $nCooperationCompayCount);
         $oPdoStatement->execute();
+    }
+    public function countAll() {
+    	$sQuery = ' SELECT
+                        count(*)
+                    FROM
+                        tStandardProductList';
+    	$oPdoStatement = $this->pdo->prepare ( $sQuery );
+    	$oPdoStatement->execute ();
+    	$aStandardProductRow = $oPdoStatement->fetch ();
+    	return $aStandardProductRow ['count(*)'];
     }
 }

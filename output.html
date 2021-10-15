@@ -15,35 +15,36 @@
 
 		<form action="">
 			<div>
-				카테고리 : <select name="categorySelect" id="categorySelect">
+				카테고리 :
+				<select name="categorySelect" id="categorySelect">
 					<option value="none">카테고리</option>
 				</select>
-				<input type="button" class="btn" id="search-btn" value="검색" />
+				<button class="btn" onClick="findStandardProductList(1, 1, 1);" type="button">검색</button>
 			</div>
 			<div class="main-layout">
 				<div class="layout-left">
-					<input type="text" class="btn" value="기준 상품"/>
-					<button class="btn" onClick="findStandardProductList(1);" type="submit" >엑셀 다운로드</button>
-					<table border="1">
-						<th>상품 </br>코드 ↑
-						</th>
-						<th>카테고리</th>
-						<th>상품 명</th>
-						<th>최저가</th>
-						<th>모바일 </br> 최저가
-						</th>
-						<th>평균가</th>
-						<th>업체 수</th>
-						<tbody id=standardProductTable>
-						</tbody>
-					</table>
-					<div class="pagination" id="standardPagination">
+					<input type="text" class="btn" value="기준 상품" />
+					<button class="btn"  type="button">엑셀 다운로드</button>
+					<div style="overflow: auto; height: 650px;">
+						<table border="1">
+							<thead id="standardProductThead">
+								<th>상품 </br>코드
+								</th>
+								<th>카테고리</th>
+								<th>상품 명</th>
+								<th>최저가</th>
+								<th>모바일 </br> 최저가</th>
+								<th>평균가</th>
+								<th>업체 수</th>
+							</thead>
+							<tbody id=standardProductTbody>
+							</tbody>
+						</table>
 					</div>
-
+					<div class="pagination" id="standardPagination"></div>
 				</div>
 				<div class="layout-right">
-					<input type="text" class="btn" value="협력사 상품"/>
-					<input type="button" class="btn" value="엑셀 다운로드" />
+					<input type="text" class="btn" value="협력사 상품" /> <input type="button" class="btn" value="엑셀 다운로드" />
 					<table border="1">
 						<th>협력사 명</th>
 						<th>협력사 </br>코드
@@ -68,15 +69,7 @@
 						</tr>
 					</table>
 					<div class="pagination">
-						<a class="arrow" href="#"><<</a>
-						<a class="arrow" href="#">&lt;</a>
-						<a href="#">1</a>
-						<a class="active" href="#">2</a>
-						<a href="#">3</a>
-						<a href="#">4</a>
-						<a href="#">5</a>
-						<a class="arrow" href="#">&gt;</a>
-						<a class="arrow" href="#">>></a>
+						<a class="arrow" href="#"><<</a> <a class="arrow" href="#">&lt;</a> <a href="#">1</a> <a class="active" href="#">2</a> <a href="#">3</a> <a href="#">4</a> <a href="#">5</a> <a class="arrow" href="#">&gt;</a> <a class="arrow" href="#">>></a>
 					</div>
 				</div>
 			</div>

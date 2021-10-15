@@ -7,25 +7,21 @@ class CooperationProductDAO {
 		$oPdo = new pdoConnect ();
 		$this->pdo = $oPdo->connectPdo ();
 	}
-
-	public function findByCooperationProductSeq($sCooperationProductSeq)
-	{
-	    $sQuery = ' SELECT
+	public function findByCooperationProductSeq($sCooperationProductSeq) {
+		$sQuery = ' SELECT
                         *
                     FROM
                         tCooperationProductList
                         
                     WHERE
                         sCooperationProductSeq = :sCooperationProductSeq';
-	    
-	    $oPdoStatement = $this->pdo->prepare($sQuery);
-	    $oPdoStatement->bindValue(":sCooperationProductSeq", $sCooperationProductSeq);
-	    $oPdoStatement->execute();
-	    $oProduct = $oPdoStatement->fetch();
-	    return $oProduct;
+
+		$oPdoStatement = $this->pdo->prepare ( $sQuery );
+		$oPdoStatement->bindValue ( ":sCooperationProductSeq", $sCooperationProductSeq );
+		$oPdoStatement->execute ();
+		$oProduct = $oPdoStatement->fetch ();
+		return $oProduct;
 	}
-	
-	
 	public function save($oCooperationProduct) {
 		$sQuery = ' INSERT INTO tCooperationProductList
                                	(sCooperationProductSeq,
@@ -45,18 +41,17 @@ class CooperationProductDAO {
 								 :nMobilePrice,
 								  NOW())';
 		$oPdoStatement = $this->pdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":sCooperationProductSeq", $oCooperationProduct->getCooperationProductSeq());
-		$oPdoStatement->bindValue ( ":sCooperationCompanySeq", $oCooperationProduct->getCooperationCompanySeq());
-		$oPdoStatement->bindValue ( ":nCategorySeq", $oCooperationProduct->getCategorySeq());
-		$oPdoStatement->bindValue ( ":sName", $oCooperationProduct->getName() );
-		$oPdoStatement->bindValue ( ":sURL", $oCooperationProduct->getURL());
-		$oPdoStatement->bindValue ( ":nPrice", $oCooperationProduct->getPrice());
-		$oPdoStatement->bindValue ( ":nMobilePrice", $oCooperationProduct->getMobilePrice());
+		$oPdoStatement->bindValue ( ":sCooperationProductSeq", $oCooperationProduct->getCooperationProductSeq () );
+		$oPdoStatement->bindValue ( ":sCooperationCompanySeq", $oCooperationProduct->getCooperationCompanySeq () );
+		$oPdoStatement->bindValue ( ":nCategorySeq", $oCooperationProduct->getCategorySeq () );
+		$oPdoStatement->bindValue ( ":sName", $oCooperationProduct->getName () );
+		$oPdoStatement->bindValue ( ":sURL", $oCooperationProduct->getURL () );
+		$oPdoStatement->bindValue ( ":nPrice", $oCooperationProduct->getPrice () );
+		$oPdoStatement->bindValue ( ":nMobilePrice", $oCooperationProduct->getMobilePrice () );
 		$oPdoStatement->execute ();
 	}
-	
 	public function update($oCooperationProduct) {
-	    $sQuery = ' UPDATE
+		$sQuery = ' UPDATE
                         tCooperationProductList
                     SET
                         sCooperationCompanySeq = :sCooperationCompanySeq,
@@ -68,15 +63,15 @@ class CooperationProductDAO {
                         dtInputDate = NOW()
                     WHERE
                         sCooperationProductSeq = :sCooperationProductSeq';
-	    $oPdoStatement = $this->pdo->prepare ( $sQuery );
-	   
-	    $oPdoStatement->bindValue ( ":sCooperationCompanySeq", 'kkkk');
-	    $oPdoStatement->bindValue ( ":nCategorySeq", $oCooperationProduct->getCategorySeq());
-	    $oPdoStatement->bindValue ( ":sName", $oCooperationProduct->getName() );
-	    $oPdoStatement->bindValue ( ":sURL", $oCooperationProduct->getURL());
-	    $oPdoStatement->bindValue ( ":nPrice", $oCooperationProduct->getPrice());
-	    $oPdoStatement->bindValue ( ":nMobilePrice", $oCooperationProduct->getMobilePrice());
-	    $oPdoStatement->bindValue ( ":sCooperationProductSeq", $oCooperationProduct->getCooperationProductSeq());
-	    $oPdoStatement->execute ();
+		$oPdoStatement = $this->pdo->prepare ( $sQuery );
+
+		$oPdoStatement->bindValue ( ":sCooperationCompanySeq", 'kkkk' );
+		$oPdoStatement->bindValue ( ":nCategorySeq", $oCooperationProduct->getCategorySeq () );
+		$oPdoStatement->bindValue ( ":sName", $oCooperationProduct->getName () );
+		$oPdoStatement->bindValue ( ":sURL", $oCooperationProduct->getURL () );
+		$oPdoStatement->bindValue ( ":nPrice", $oCooperationProduct->getPrice () );
+		$oPdoStatement->bindValue ( ":nMobilePrice", $oCooperationProduct->getMobilePrice () );
+		$oPdoStatement->bindValue ( ":sCooperationProductSeq", $oCooperationProduct->getCooperationProductSeq () );
+		$oPdoStatement->execute ();
 	}
 }
