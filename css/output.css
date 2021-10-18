@@ -72,3 +72,8 @@ table th a {
 	float: left;
 	width: 50%
 }
+
+#progressStatus {
+	height:15px;
+	width: 15px;
+}

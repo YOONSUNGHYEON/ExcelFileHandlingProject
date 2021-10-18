@@ -64,8 +64,15 @@ class OutputController
 
     public function download()
     {
-        $aStandardProduct = json_decode($_POST['productArrObj']);
-
-        return $this->oStandardProductService->download($aStandardProduct);
+        $aProduct = json_decode($_POST['productArrObj']);
+        $aResponse = array();
+        $nProductType = $_POST['productType'];
+        if($nProductType==1) {
+        	$aResponse['path'] = $this->oStandardProductService->download($aProduct);
+        	$aResponse['code'] = 200;
+        }else {
+        	$aResponse['code'] =  $this->oCooperationProductService->download($aProduct);
+        }
+        return json_encode ($aResponse);
     }
 }

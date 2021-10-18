@@ -15,7 +15,8 @@
 
 		<form action="">
 			<div>
-				카테고리 : <select name="categorySelect" id="categorySelect">
+				카테고리 :
+				<select name="categorySelect" id="categorySelect">
 					<option value="none">카테고리</option>
 				</select>
 				<button class="btn" onClick="findListByCategorySeq();" type="button">검색</button>
@@ -23,9 +24,10 @@
 			<div class="main-layout">
 				<div class="layout-left">
 					<span class="btn">기준 상품</span>
-					<button class="btn" onclick="download();" type="button">엑셀 다운로드</button>
+					<button class="btn" onclick="download(1);" type="button">엑셀 다운로드</button>
+					<img id="progressStatus" src="image/loadingbar.gif" /> 
 					<div style="overflow: auto; height: 650px;">
-						<table border="1" id="productTable">
+						<table border="1" id="standardProductTable">
 							<thead id="standardProductThead">
 								<th>상품 </br>코드
 								</th>
@@ -45,26 +47,26 @@
 				</div>
 				<div class="layout-right">
 					<span class="btn">협력사 상품</span>
-					<button class="btn" onclick="download();" type="button">엑셀 다운로드</button>
+					<button class="btn" onclick="download(2);" type="button">엑셀 다운로드</button>
 					<div style="overflow: auto; height: 650px;">
-					<table border="1">
-						<thead id="cooperationProductThead">
-							<th>협력사 명</th>
-							<th>협력사 </br>코드
-							</th>
-							<th>협력사 </br>상품명
-							</th>
-							<th>협력사 </br>URL
-							</th>
-							<th>가격</th>
-							<th>모바일</br>가격
-							</th>
-							<th>입력 일</th>
-						</thead>
-						<tbody id=cooperationProductTbody>
-						</tbody>
-					</table>
-					</div>				
+						<table id="cooperationProductTable" border="1">
+							<thead id="cooperationProductThead">
+								<th>협력사 명</th>
+								<th>협력사 </br>코드
+								</th>
+								<th>협력사 </br>상품명
+								</th>
+								<th>협력사 </br>URL
+								</th>
+								<th>가격</th>
+								<th>모바일</br>가격
+								</th>
+								<th>입력 일</th>
+							</thead>
+							<tbody id=cooperationProductTbody>
+							</tbody>
+						</table>
+					</div>
 					<div class="pagination" id="cooperationPagination"></div>
 				</div>
 			</div>

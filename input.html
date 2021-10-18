@@ -9,22 +9,25 @@
 </head>
 <body>
 	<div class="content">
-	<a class="btn" href="output.html">output으로</a>
-	<h2>Excel File Input </h2>
-		<form  method="post" enctype="multipart/form-data">
+		<a class="btn" href="output.html">output으로</a>
+		<h2>Excel File Input</h2>
+		<form method="post" enctype="multipart/form-data">
 			<div class="filebox">
 				<select name="productOption">
 					<option value="2">기준 상품</option>
 					<option value="3">협력 상품</option>
 				</select>
-				<input type="file" name="file" id="file">
-				<input class="upload-name" value="파일선택"> 
-				<label for="file">찾아보기</label>
-				<input type="button" class="btn" id="btn" value="전송" />
-				
-			</div>					
+				<input type="file" name="file" id="file"> <input class="upload-name" value="파일선택"> <label for="file">찾아보기</label> <input type="button" class="btn" id="btn" value="전송" />
+
+			</div>
 		</form>
+		<div id="progressLoading">
+			<img src="image/loadingbar.gif" /> 
+			<span id="progressStatus">엑셀 파일 데이터를 저장 중입니다.</span>
+		</div>
+
 	</div>
+
 </body>
 </html>
 

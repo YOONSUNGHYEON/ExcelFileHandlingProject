@@ -7,11 +7,57 @@
 	border: 0;
 }
 
-.filebox label {
-
+.progress {
+	position: relative;
+	width: 100%;
+	border: 1px solid #ddd;
+	padding: 1px;
+	border-radius: 3px;
 }
 
-.filebox .upload-name {
-
+.bar {
+	background-color: #337ab7;
+	width: 0%;
+	height: 20px;
+	border-radius: 3px;
 }
 
+.percent {
+	position: absolute;
+	display: inline-block;
+	top: 1px;
+	left: 48%;
+}
+
+.progressContainer {
+	position: relative;
+	width: 450px;
+	padding: 20px 10px;
+	border: 1px solid #eee;
+	margin-top: 15px;
+	background: #000;
+	height: 20px;
+}
+
+.progress {
+	position: absolute;
+	width: calc(100% - 20px);
+	height: 20px;
+}
+
+.progressTotal {
+	background: #5D5D5D;
+	border-radius: 10px;
+}
+
+.progressNow {
+	width: calc(0% - 20px);
+	background: #FFF;
+	border-radius: 10px;
+}
+
+.progressPer {
+	background: transparent;
+	text-align: center;
+	color: #A6A6A6;
+}

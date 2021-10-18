@@ -8,7 +8,7 @@ class CooperationProduct {
 	private $nPrice;
 	private $nMobilePrice;
 	private $dtInputDate;
-	function __construct($sCooperationProductSeq, $sCooperationCompanySeq, $nCategorySeq, $sName, $sURL, $nPrice, $nMobilePrice) {
+	function __construct($sCooperationProductSeq, $sCooperationCompanySeq, $nCategorySeq, $sName, $sURL, $nPrice, $nMobilePrice, $dtInputDate) {
 		$this->sCooperationProductSeq = $sCooperationProductSeq;
 		$this->sCooperationCompanySeq = $sCooperationCompanySeq;
 		$this->nCategorySeq = $nCategorySeq;
@@ -16,6 +16,7 @@ class CooperationProduct {
 		$this->sURL = $sURL;
 		$this->nPrice = $nPrice;
 		$this->nMobilePrice = $nMobilePrice;
+		$this->dtInputDate = $dtInputDate;
 	}
 	public function getCooperationProductSeq() {
 		return $this->sCooperationProductSeq;
@@ -37,5 +38,8 @@ class CooperationProduct {
 	}
 	public function getMobilePrice() {
 		return $this->nMobilePrice;
+	}
+	public function getInputDate() {
+		return $this->dtInputDate;
 	}
 }

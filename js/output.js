@@ -1,33 +1,59 @@
 window.onload = function() {
 	findCategoryList();
+	$("#progressStatus").hide();
 }
-function download() {
+function download(productType) {
 	let productArray = [];
 	let productDataObj = {};
-	for(let i=1; i<=$('#productTable tbody tr').length; i++){
-		let tempQuery = "#standardProductTbody > tr:nth-child("+i+")>";
-		productDataObj.nStandardProductSeq =$(tempQuery+"td:nth-child(1)").text();
-		productDataObj.sCategoryName =$(tempQuery+"td:nth-child(2)").text();  
-		productDataObj.sName =$(tempQuery+"td:nth-child(3)").text();
-		productDataObj.nLowestPrice =$(tempQuery+"td:nth-child(4)").text();
-		productDataObj.nMobileLowestPrice =$(tempQuery+"td:nth-child(5)").text();
-		productDataObj.nAveragePrice =$(tempQuery+"td:nth-child(6)").text();
-		productDataObj.nCooperationCompayCount =$(tempQuery+"td:nth-child(7)").text();
-		productArray.push(productDataObj);
-		productDataObj={};
+	//productType = 1 기준 상품
+	//productType = 2 협력사 상품
+
+	if (productType == 1) {
+		for (let i = 1; i <= $('#standardProductTable tbody tr').length; i++) {
+			let tempQuery = "#standardProductTbody > tr:nth-child(" + i + ")>";
+			productDataObj.nStandardProductSeq = $(tempQuery + "td:nth-child(1)").text();
+			productDataObj.sCategoryName = $(tempQuery + "td:nth-child(2)").text();
+			productDataObj.sName = $(tempQuery + "td:nth-child(3)").text();
+			productDataObj.nLowestPrice = $(tempQuery + "td:nth-child(4)").text();
+			productDataObj.nMobileLowestPrice = $(tempQuery + "td:nth-child(5)").text();
+			productDataObj.nAveragePrice = $(tempQuery + "td:nth-child(6)").text();
+			productDataObj.nCooperationCompayCount = $(tempQuery + "td:nth-child(7)").text();
+			productArray.push(productDataObj);
+			productDataObj = {};
+		}
+	} else {
+		for (let i = 1; i <= $('#cooperationProductTable tbody tr').length; i++) {
+			let tempQuery = "#cooperationProductTbody > tr:nth-child(" + i + ")>";
+			productDataObj.sCooperationCompanyName = $(tempQuery + "td:nth-child(1)").text();
+			productDataObj.sCooperationCompanySeq = $(tempQuery + "td:nth-child(2)").text();
+			productDataObj.sName = $(tempQuery + "td:nth-child(3)").text();
+			productDataObj.sURL = $(tempQuery + "td:nth-child(4) > a").attr("href");
+			productDataObj.nPrice = $(tempQuery + "td:nth-child(5)").text();
+			productDataObj.nMobilePrice = $(tempQuery + "td:nth-child(6)").text();
+			productDataObj.dtInputDate = $(tempQuery + "td:nth-child(7)").text();
+			productArray.push(productDataObj);
+			productDataObj = {};
+		}
 	}
+
 	let jsonData = JSON.stringify(productArray);
-	//console.log(jsonData);
 	$.ajax({
 		url: "mapper.php?method=download",
 		type: "POST",
 		dataType: "json",
 		data: {
-			productArrObj : jsonData
-		},
-		success: function(response) {
-			console.log(response);
-			
+			productType: productType,
+			productArrObj: jsonData
+		},beforeSend: function() {
+			$("#progressStatus").show();
+		},complete: function() {
+			$("#progressStatus").hide();
+		}, success: function(downloadResponse) {
+			if(downloadResponse['code']==200){
+				alert("다운로드 성공했습니다.\n(저장 경로 : "+downloadResponse['path']+" )");
+			}else if(downloadResponse['code']==400){
+				alert("다운로드 실패했습니다.");
+			}
 		}
 	})
 }
@@ -49,9 +75,9 @@ function findCategoryList() {
 		}
 	});
 }
-function findListByCategorySeq(){
-	findCooperationProductList(1,1,1);
-	findStandardProductList(1,1,1);
+function findListByCategorySeq() {
+	findCooperationProductList(1, 1, 1);
+	findStandardProductList(1, 1, 1);
 }
 function findCooperationProductList(page, option, order) {
 	let categorySeq = $("select[name=categorySelect]").val();
@@ -66,9 +92,68 @@ function findCooperationProductList(page, option, order) {
 			order: order, //오름차순 = 1, 내림차순=2;
 		},
 		success: function(tableData) {
-			console.log(tableData);
+			let cooperationProductThead = "";
+			cooperationProductThead += '<th>협력사 명</th>';
+			cooperationProductThead += '<th>협력사 코드</th>';
+			if (option == 1) {
+				if (order == 1) {
+					cooperationProductThead += '<th><a class="activeThead" onClick="findCooperationProductList(1, 1 ,2)" href="#a">협력사 상품명</a></th>';
+				} else if (order == 2) {
+					cooperationProductThead += '<th><a  class="activeThead" onClick="findCooperationProductList(1,1,1)" href="#a">협력사 상품명</a></th>';
+				}
+			} else {
+				cooperationProductThead += '<th><a onClick="findCooperationProductList(1, 1 ,1)" href="#a">협력사 상품명</a></th>';
 			}
-			
+			cooperationProductThead += '<th>협력사 URL</th>';
+			cooperationProductThead += '<th>가격</th>';
+			cooperationProductThead += '<th>모바일 가격</th>';
+			if (option == 2) {
+				if (order == 1) {
+					cooperationProductThead += '<th><a class="activeThead" onClick="findCooperationProductList(1,2,2)" href="#a">입력 일</a></th>';
+				} else if (order == 2) {
+					cooperationProductThead += '<th><a  class="activeThead" onClick="findCooperationProductList(1,2,1)" href="#a">입력 일</a></th>';
+				}
+			} else {
+				cooperationProductThead += '<th><a onClick="findCooperationProductList(1, 2 ,1)" href="#a">입력 일</a></th>';
+			}
+			$("#cooperationProductThead").html(cooperationProductThead);
+			if (order == 1) {
+				$('#cooperationProductThead .activeThead').append('↓');
+			} else {
+				$('#cooperationProductThead .activeThead').append('↑');
+			}
+
+			let cooperationProductTable = "";
+			for (let i = 0; i < tableData['nCurrentCount'] - 1; i++) {
+				cooperationProductTable += '<tr style="cursor:pointer;">';
+				cooperationProductTable += '<td>' + tableData[i]["sCooperationCompanyName"] + '</a></td>';
+				cooperationProductTable += '<td>' + tableData[i]['sCooperationCompanySeq'] + '</td>';
+				cooperationProductTable += '<td>' + tableData[i]['sName'] + '</td>';
+				cooperationProductTable += '<td><a target="_blank" href="' + tableData[i]['sURL'] + '">ⓤ</a></td>';
+				cooperationProductTable += '<td>' + tableData[i]['nPrice'] + '</td>';
+				cooperationProductTable += '<td>' + tableData[i]['nMobilePrice'] + '</td>';
+				cooperationProductTable += '<td>' + tableData[i]['dtInputDate'] + '</td>';
+				cooperationProductTable += '</tr>';
+			}
+			$("#cooperationProductTbody").html(cooperationProductTable);
+
+			let pagination = "";
+			let preArrow = Number(tableData['aPageData']['nCurrentPage']) - Number(tableData['aPageData']['nBlockPage']);
+			let nextArrow = Number(tableData['aPageData']['nCurrentPage']) + Number(tableData['aPageData']['nBlockPage']);
+			pagination += '<a class="arrow" onClick="findCooperationProductList(1,' + option + ',' + order + ')" href="#a"><<</a>';
+			pagination += '<a class="arrow" onClick="findCooperationProductList(' + preArrow + ',' + option + ',' + order + ')" href="javascript:void(0);">&lt;</a>';
+			for (let i = tableData['aPageData']['nStartPage']; i <= tableData['aPageData']['nEndPage']; i++) {
+				if (tableData['aPageData']['nCurrentPage'] == i) {
+					pagination += '<a class="active" onClick="findCooperationProductList(' + i + ',' + option + ',' + order + ')"  href="javascript:void(0);">' + i + '</a>';
+				} else {
+					pagination += '<a onClick="findCooperationProductList(' + i + ',' + option + ',' + order + ')"  href="javascript:void(0);">' + i + '</a>';
+				}
+			}
+			pagination += '<a class="arrow" onClick="findCooperationProductList(' + nextArrow + ',' + option + ',' + order + ')" href="javascript:void(0);">&gt;</a>';
+			pagination += '<a class="arrow" onClick="findCooperationProductList(' + tableData['aPageData']['nTotalPage'] + ',' + option + ',' + order + ')" href="javascript:void(0);" )">>></a>';
+			$("#cooperationPagination").html(pagination);
+		}
+
 	})
 }
 
@@ -85,7 +170,6 @@ function findStandardProductList(page, option, order) {
 			order: order, //오름차순 = 1, 내림차순=2;
 		},
 		success: function(tableData) {
-			console.log(tableData);
 			let standardProductThead = "";
 			for (let i = 1; i <= 7; i++) {
 				if (i == 2) {
@@ -103,7 +187,7 @@ function findStandardProductList(page, option, order) {
 				}
 			}
 			$("#standardProductThead").html(standardProductThead);
-			
+
 			$('#option1').html('상품 코드');
 			$('#option3').html('상품 명');
 			$('#option4').html('최저가');
@@ -111,9 +195,9 @@ function findStandardProductList(page, option, order) {
 			$('#option7').html('업체 수');
 
 			if (order == 1) {
-				$('.activeThead').append('↓');
+				$('#standardProductThead .activeThead').append('↓');
 			} else {
-				$('.activeThead').append('↑');
+				$('#standardProductThead .activeThead').append('↑');
 			}
 
 			let standardProductTable = "";
@@ -134,21 +218,23 @@ function findStandardProductList(page, option, order) {
 			let pagination = "";
 			let preArrow = Number(tableData['aPageData']['nCurrentPage']) - Number(tableData['aPageData']['nBlockPage']);
 			let nextArrow = Number(tableData['aPageData']['nCurrentPage']) + Number(tableData['aPageData']['nBlockPage']);
-			pagination += '<a class="arrow" onClick="findStandardProductList(1,' + option + ','+ order +')" href="javascript:void(0);"><<</a>';
-			pagination += '<a class="arrow" onClick="findStandardProductList('+ preArrow +',' + option + ','+ order +')" href="javascript:void(0);">&lt;</a>';
+			pagination += '<a class="arrow" onClick="findStandardProductList(1,' + option + ',' + order + ')" href="#a"><<</a>';
+			pagination += '<a class="arrow" onClick="findStandardProductList(' + preArrow + ',' + option + ',' + order + ')" href="javascript:void(0);">&lt;</a>';
 			for (let i = tableData['aPageData']['nStartPage']; i <= tableData['aPageData']['nEndPage']; i++) {
 				if (tableData['aPageData']['nCurrentPage'] == i) {
-					pagination += '<a class="active" onClick="findStandardProductList(' + i + ',' + option + ','+ order +')"  href="javascript:void(0);">' + i + '</a>';
+					pagination += '<a class="active" onClick="findStandardProductList(' + i + ',' + option + ',' + order + ')"  href="javascript:void(0);">' + i + '</a>';
 				} else {
-					pagination += '<a onClick="findStandardProductList(' + i + ',' + option + ','+ order +')"  href="javascript:void(0);">' + i + '</a>';
+					pagination += '<a onClick="findStandardProductList(' + i + ',' + option + ',' + order + ')"  href="javascript:void(0);">' + i + '</a>';
 				}
 			}
-			pagination += '<a class="arrow" onClick="findStandardProductList('+ nextArrow +',' + option + ','+ order +')" href="javascript:void(0);">&gt;</a>';
-			pagination += '<a class="arrow" onClick="findStandardProductList(' + tableData['aPageData']['nTotalPage'] + ',' + option + ','+ order +')" href="javascript:void(0);" )">>></a>';
+			pagination += '<a class="arrow" onClick="findStandardProductList(' + nextArrow + ',' + option + ',' + order + ')" href="javascript:void(0);">&gt;</a>';
+			pagination += '<a class="arrow" onClick="findStandardProductList(' + tableData['aPageData']['nTotalPage'] + ',' + option + ',' + order + ')" href="javascript:void(0);" )">>></a>';
 			$("#standardPagination").html(pagination);
 
 		},
 	})
+
+
 }
 
 //http://prod-webdev.danawa.com/info/?pcode=XXXX

@@ -10,21 +10,21 @@ class InputController {
 	}
 	public function upload() {
 		$nProductOption = trim ( $_POST ['productOption'] );
-
 		if (! empty ( $nProductOption ) && ! empty ( $_FILES ['file'] ['name'] )) {
 			$pathinfo = pathinfo ( $_FILES ["file"] ["name"] );
 			if (($pathinfo ['extension'] == 'xlsx' || $pathinfo ['extension'] == 'xls') && $_FILES ['file'] ['size'] > 0) {
 				if ($nProductOption == 2) {
-					$nResponse = $this->oStandardProductService->upload ( $_FILES ['file'] ['tmp_name'] );
+					$aResponse = $this->oStandardProductService->upload ( $_FILES ['file'] ['tmp_name'] );
 				} else if ($nProductOption == 3) {
-					$nResponse = $this->oCooperationProductService->upload ( $_FILES ['file'] ['tmp_name'] );
+					$aResponse = $this->oCooperationProductService->upload ( $_FILES ['file'] ['tmp_name'] );
 				}
-				return json_encode ( $nResponse, JSON_PRETTY_PRINT );
+				
 			} else {
-				return 401;
+				$aResponse['code'] = 401;
 			}
 		} else {
-			return 400;
+			$aResponse['code'] = 400;
 		}
+		return json_encode ($aResponse);
 	}
 }
