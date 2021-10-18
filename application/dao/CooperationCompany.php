@@ -34,4 +34,19 @@ class CooperationCompanyDAO {
 		$oCompany = $oPdoStatement->fetch();
 		return $oCompany;
 	}
+	
+	public function update($sCooperationCompanySeq, $sName) {
+	    $sQuery = ' UPDATE
+                        tCooperationCompany
+                    SET
+                        sCooperationCompanySeq = :sCooperationCompanySeq,
+                        sName = :sName
+                    WHERE
+                        sCooperationCompanySeq = :sCooperationCompanySeq';
+	    $oPdoStatement = $this->pdo->prepare ( $sQuery );
+	    
+	    $oPdoStatement->bindValue ( ":sCooperationCompanySeq", $sCooperationCompanySeq );
+	    $oPdoStatement->bindValue ( ":sName", $sName );
+	    $oPdoStatement->execute ();
+	}
 }

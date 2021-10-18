@@ -108,11 +108,11 @@ class StandardProductDAO {
 					WHERE
                         CG.nCategorySeq = :nCategorySeq
                     ORDER BY
-						SPL.nCooperationCompayCount DESC
+						SPL.nCooperationCompayCount DESC,
                         SPL.nStandardProductSeq DESC,
 						SPL.sName DESC,
 						SPL.nLowestPrice DESC,
-						SPL.nMobileLowestPrice DESC,			
+						SPL.nMobileLowestPrice DESC		
 					LIMIT
                         :nLimitCount
                     OFFSET :nStartCount';
@@ -140,11 +140,11 @@ class StandardProductDAO {
 					WHERE
                         CG.nCategorySeq = :nCategorySeq
                     ORDER BY
-						SPL.nCooperationCompayCount
+						SPL.nCooperationCompayCount,
                         SPL.nStandardProductSeq,
 						SPL.sName,
 						SPL.nLowestPrice,
-						SPL.nMobileLowestPrice,
+						SPL.nMobileLowestPrice
 					LIMIT
                         :nLimitCount
                     OFFSET :nStartCount';
@@ -402,12 +402,15 @@ class StandardProductDAO {
 		$oPdoStatement->bindValue ( ":nCooperationCompayCount", $nCooperationCompayCount );
 		$oPdoStatement->execute ();
 	}
-	public function countAll() {
+	public function countByCategorySeq($nCategorySeq) {
 		$sQuery = ' SELECT
                         count(*)
                     FROM
-                        tStandardProductList';
+                        tStandardProductList
+                    WHERE
+                        nCategorySeq = :nCategorySeq';
 		$oPdoStatement = $this->pdo->prepare ( $sQuery );
+		$oPdoStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
 		$oPdoStatement->execute ();
 		$aStandardProductRow = $oPdoStatement->fetch ();
 		return $aStandardProductRow ['count(*)'];

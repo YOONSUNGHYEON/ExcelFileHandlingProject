@@ -1,6 +1,6 @@
 <?php
-require_once $_SERVER ["DOCUMENT_ROOT"] . '/ExcelFileHandlingProject/pdoConnect.php';
-require_once $_SERVER ["DOCUMENT_ROOT"] . '/ExcelFileHandlingProject/application/dto/CooperationProduct.php';
+require_once $_SERVER["DOCUMENT_ROOT"] . '/ExcelFileHandlingProject/pdoConnect.php';
+require_once $_SERVER["DOCUMENT_ROOT"] . '/ExcelFileHandlingProject/application/dto/CooperationProduct.php';
 class CooperationProductDAO {
 	private $pdo;
 	function __construct() {
@@ -22,6 +22,52 @@ class CooperationProductDAO {
 		$oProduct = $oPdoStatement->fetch ();
 		return $oProduct;
 	}
+	public function countByCategorySeq($nCategorySeq) {
+	    $sQuery = ' SELECT
+                        count(*)
+                    FROM
+                        tCooperationProductList
+                    WHERE
+                        nCategorySeq = :nCategorySeq';
+	    $oPdoStatement = $this->pdo->prepare ( $sQuery );
+	    $oPdoStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
+	    $oPdoStatement->execute ();
+	    $aStandardProductRow = $oPdoStatement->fetch ();
+	    return $aStandardProductRow ['count(*)'];
+	}
+	public function findByCategorySeqOrderBySeqASC($nStartCount, $nLimitCount, $nCategorySeq) {
+	    $sQuery = ' SELECT
+                       *
+                    FROM
+                        tCooperationProductList CPL
+                        LEFT OUTER JOIN tCooperationCompany CC 
+                        ON (CPL.sCooperationCompanySeq = CC.sCooperationCompanySeq)
+					WHERE
+                        CPL.nCategorySeq = :nCategorySeq
+                    ORDER BY
+                        CPL.sCooperationProductSeq,
+                        CC.sName,
+						SPL.sName,
+						SPL.nLowestPrice,
+						SPL.nMobileLowestPrice,
+						SPL.nCooperationCompayCount
+					LIMIT
+                        :nLimitCount
+                    OFFSET :nStartCount';
+	    
+	    $oPdoStatement = $this->pdo->prepare ( $sQuery );
+	    $oPdoStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
+	    $oPdoStatement->bindValue ( ":nLimitCount", $nLimitCount );
+	    $oPdoStatement->bindValue ( ":nStartCount", $nStartCount );
+	    $oPdoStatement->execute ();
+	    
+	    $aStandardProduct = array ();
+	    while ( $oStandardProductRow = $oPdoStatement->fetch ( PDO::FETCH_ASSOC ) ) {
+	        array_push ( $aStandardProduct, $oStandardProductRow );
+	    }
+	    return $aStandardProduct;
+	    
+	
 	public function save($oCooperationProduct) {
 		$sQuery = ' INSERT INTO tCooperationProductList
                                	(sCooperationProductSeq,
@@ -65,7 +111,7 @@ class CooperationProductDAO {
                         sCooperationProductSeq = :sCooperationProductSeq';
 		$oPdoStatement = $this->pdo->prepare ( $sQuery );
 
-		$oPdoStatement->bindValue ( ":sCooperationCompanySeq", 'kkkk' );
+		$oPdoStatement->bindValue ( ":sCooperationCompanySeq", $oCooperationProduct->getCooperationCompanySeq() );
 		$oPdoStatement->bindValue ( ":nCategorySeq", $oCooperationProduct->getCategorySeq () );
 		$oPdoStatement->bindValue ( ":sName", $oCooperationProduct->getName () );
 		$oPdoStatement->bindValue ( ":sURL", $oCooperationProduct->getURL () );

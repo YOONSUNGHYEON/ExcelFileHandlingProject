@@ -1,7 +1,36 @@
 window.onload = function() {
 	findCategoryList();
 }
-
+function download() {
+	let productArray = [];
+	let productDataObj = {};
+	for(let i=1; i<=$('#productTable tbody tr').length; i++){
+		let tempQuery = "#standardProductTbody > tr:nth-child("+i+")>";
+		productDataObj.nStandardProductSeq =$(tempQuery+"td:nth-child(1)").text();
+		productDataObj.sCategoryName =$(tempQuery+"td:nth-child(2)").text();  
+		productDataObj.sName =$(tempQuery+"td:nth-child(3)").text();
+		productDataObj.nLowestPrice =$(tempQuery+"td:nth-child(4)").text();
+		productDataObj.nMobileLowestPrice =$(tempQuery+"td:nth-child(5)").text();
+		productDataObj.nAveragePrice =$(tempQuery+"td:nth-child(6)").text();
+		productDataObj.nCooperationCompayCount =$(tempQuery+"td:nth-child(7)").text();
+		productArray.push(productDataObj);
+		productDataObj={};
+	}
+	let jsonData = JSON.stringify(productArray);
+	//console.log(jsonData);
+	$.ajax({
+		url: "mapper.php?method=download",
+		type: "POST",
+		dataType: "json",
+		data: {
+			productArrObj : jsonData
+		},
+		success: function(response) {
+			console.log(response);
+			
+		}
+	})
+}
 function findCategoryList() {
 	$.ajax({
 		type: 'GET',
@@ -20,11 +49,33 @@ function findCategoryList() {
 		}
 	});
 }
+function findListByCategorySeq(){
+	findCooperationProductList(1,1,1);
+	findStandardProductList(1,1,1);
+}
+function findCooperationProductList(page, option, order) {
+	let categorySeq = $("select[name=categorySelect]").val();
+	$.ajax({
+		url: "mapper.php?method=findCooperationProductListByCategorySeq",
+		type: "POST",
+		dataType: "json",
+		data: {
+			categorySeq: categorySeq,
+			page: page,
+			option: option,
+			order: order, //오름차순 = 1, 내림차순=2;
+		},
+		success: function(tableData) {
+			console.log(tableData);
+			}
+			
+	})
+}
+
 function findStandardProductList(page, option, order) {
 	let categorySeq = $("select[name=categorySelect]").val();
-	console.log(page+","+option+","+order);
 	$.ajax({
-		url: "mapper.php?method=findListByCategorySeq",
+		url: "mapper.php?method=findStandardProductListByCategorySeq",
 		type: "POST",
 		dataType: "json",
 		data: {
@@ -43,12 +94,12 @@ function findStandardProductList(page, option, order) {
 					standardProductThead += '<th>평균가</th>';
 				} else if (option == i) {
 					if (order == 1) {
-						standardProductThead += '<th><a id="option' + i + '" class="activeThead" onClick="findStandardProductList(1,' + i + ',2)" href="#"></a></th>';
+						standardProductThead += '<th><a id="option' + i + '" class="activeThead" onClick="findStandardProductList(1,' + i + ',2)" href="#a"></a></th>';
 					} else if (order == 2) {
-						standardProductThead += '<th><a id="option' + i + '" class="activeThead" onClick="findStandardProductList(1,' + i + ',1)" href="#"></a></th>';
+						standardProductThead += '<th><a id="option' + i + '" class="activeThead" onClick="findStandardProductList(1,' + i + ',1)" href="#a"></a></th>';
 					}
 				} else {
-					standardProductThead += '<th><a id="option' + i + '" onClick="findStandardProductList(1,' + i + ',1)" href="#"></a></th>';
+					standardProductThead += '<th><a id="option' + i + '" onClick="findStandardProductList(1,' + i + ',1)" href="#a"></a></th>';
 				}
 			}
 			$("#standardProductThead").html(standardProductThead);
@@ -83,17 +134,17 @@ function findStandardProductList(page, option, order) {
 			let pagination = "";
 			let preArrow = Number(tableData['aPageData']['nCurrentPage']) - Number(tableData['aPageData']['nBlockPage']);
 			let nextArrow = Number(tableData['aPageData']['nCurrentPage']) + Number(tableData['aPageData']['nBlockPage']);
-			pagination += '<a class="arrow" onClick="findStandardProductList(1,' + option + ','+ order +')" href="#"><<</a>';
-			pagination += '<a class="arrow" onClick="findStandardProductList('+ preArrow +',' + option + ','+ order +')" href="#">&lt;</a>';
+			pagination += '<a class="arrow" onClick="findStandardProductList(1,' + option + ','+ order +')" href="javascript:void(0);"><<</a>';
+			pagination += '<a class="arrow" onClick="findStandardProductList('+ preArrow +',' + option + ','+ order +')" href="javascript:void(0);">&lt;</a>';
 			for (let i = tableData['aPageData']['nStartPage']; i <= tableData['aPageData']['nEndPage']; i++) {
 				if (tableData['aPageData']['nCurrentPage'] == i) {
-					pagination += '<a class="active" onClick="findStandardProductList(' + i + ',' + option + ','+ order +')"  href="#">' + i + '</a>';
+					pagination += '<a class="active" onClick="findStandardProductList(' + i + ',' + option + ','+ order +')"  href="javascript:void(0);">' + i + '</a>';
 				} else {
-					pagination += '<a onClick="findStandardProductList(' + i + ',' + option + ','+ order +')"  href="#">' + i + '</a>';
+					pagination += '<a onClick="findStandardProductList(' + i + ',' + option + ','+ order +')"  href="javascript:void(0);">' + i + '</a>';
 				}
 			}
-			pagination += '<a class="arrow" onClick="findStandardProductList('+ nextArrow +',' + option + ','+ order +')" href="#">&gt;</a>';
-			pagination += '<a class="arrow" onClick="findStandardProductList(' + tableData['aPageData']['nTotalPage'] + ',' + option + ','+ order +')" href="#" )">>></a>';
+			pagination += '<a class="arrow" onClick="findStandardProductList('+ nextArrow +',' + option + ','+ order +')" href="javascript:void(0);">&gt;</a>';
+			pagination += '<a class="arrow" onClick="findStandardProductList(' + tableData['aPageData']['nTotalPage'] + ',' + option + ','+ order +')" href="javascript:void(0);" )">>></a>';
 			$("#standardPagination").html(pagination);
 
 		},

@@ -49,6 +49,7 @@ class WriterFactory
      */
     public static function createFromType($writerType)
     {
+        $writerType = Type::XLSX;
         switch ($writerType) {
             case Type::CSV: return self::createCSVWriter();
             case Type::XLSX: return self::createXLSXWriter();

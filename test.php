@@ -1,24 +1,24 @@
 <?php
+$data = [
+    [
+        '상품코드',
+        '카테고리',
+        '상품명',
+        '최저가',
+        '모바일 최저가',
+        '평균가',
+        '업체수'
+    ]
+];
+$aTempProduct=[];
+array_push($aTempProduct,  "dddd");
+array_push($aTempProduct,  "dddd");
+array_push($aTempProduct,  "dddd");
+array_push($aTempProduct,  "dddd");
+array_push($aTempProduct,  "dddd");
+array_push($aTempProduct,  "dddd");
+array_push($aTempProduct,  "dddd");
+array_push($data, $aTempProduct);
 
-require_once $_SERVER["DOCUMENT_ROOT"] . '/ExcelFileHandlingProject/pdoConnect.php';
-$oPdo = new pdoConnect();
-$pdo = $oPdo->connectPdo();
-$sQuery = ' SELECT
-                        *
-                    FROM
-                        tStandardProductList SPL
-                        INNER JOIN tCategory CG ON (SPL.nCategorySeq = CG.nCategorySeq)
-                    WHERE
-                        CG.nCategorySeq = :nCategorySeq LIMIT 5';
-
-$oPdoStatement = $pdo->prepare($sQuery);
-$oPdoStatement->bindValue(":nCategorySeq", 57905);
-
-$oPdoStatement->execute();
-while ($oStandardProductRow = $oPdoStatement->fetch()) {
-    print_r($oStandardProductRow);
-    echo "<br>";
-    array_push($aStandardProduct, $oStandardProductRow);
-}
-
+print_r($data);
 
