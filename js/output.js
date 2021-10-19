@@ -44,15 +44,15 @@ function download(productType) {
 		data: {
 			productType: productType,
 			productArrObj: jsonData
-		},beforeSend: function() {
+		}, beforeSend: function() {
 			$("#progressStatus").show();
-		},complete: function() {
+		}, complete: function() {
 			$("#progressStatus").hide();
 		}, success: function(downloadResponse) {
-			if(downloadResponse['code']==200){
-				alert("다운로드 성공했습니다.\n(저장 경로 : "+downloadResponse['path']+" )");
-			}else if(downloadResponse['code']==400){
-				alert("다운로드 실패했습니다.");
+			if (downloadResponse['code'] == 200) {
+				alert("다운로드 성공했습니다.\n(저장 경로 : " + downloadResponse['path'] + " )");
+			} else if (downloadResponse['code'] == 400) {
+				alert("다운로드 실패했습니다.\n(실패 원인 : " + downloadResponse['error'] + ")");
 			}
 		}
 	})
@@ -62,16 +62,25 @@ function findCategoryList() {
 		type: 'GET',
 		url: "mapper.php?method=findCategoryList",
 		dataType: "json",
-		success: function(categoryList) {
-			let option = "";
-			for (let i = 0; i < categoryList.length; i++) {
-				option += '<option id="' + categoryList[i]['nCategorySeq'] + '"';
-				option += ' name="' + categoryList[i]['nCategorySeq'] + '"';
-				option += 'value = "' + categoryList[i]['nCategorySeq'] + '">';
-				option += categoryList[i]['sName'] + '</option>';
+		success: function(categoryListResponse) {
+			if (categoryListResponse['code'] == 500) {
+				alert("서버 문제로 가져오는데 실패 했습니다.");
+			} else if (categoryListResponse['code'] == 400) {
+				alert("가져올 카테고리가 없습니다.");
+			} else if (categoryListResponse['code'] == 200) {
+				let categoryList = categoryListResponse['data'];
+				let option = "";
+				for (let i = 0; i < categoryList.length; i++) {
+					option += '<option id="' + categoryList[i]['nCategorySeq'] + '"';
+					option += ' name="' + categoryList[i]['nCategorySeq'] + '"';
+					option += 'value = "' + categoryList[i]['nCategorySeq'] + '">';
+					option += categoryList[i]['sName'] + '</option>';
+				}
+				$("#categorySelect").html(option);
 			}
 
-			$("#categorySelect").html(option);
+
+
 		}
 	});
 }

@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER ["DOCUMENT_ROOT"] . '/ExcelFileHandlingProject/pdoConnect.php';
+require_once $_SERVER ["DOCUMENT_ROOT"] . '/ExcelFileHandlingProject/include/pdoConnect.php';
 class CooperationCompanyDAO {
 	private $pdo;
 	function __construct() {
@@ -30,16 +30,17 @@ class CooperationCompanyDAO {
 		
 		$oPdoStatement = $this->pdo->prepare ( $sQuery );
 		$oPdoStatement->bindValue ( ":sCooperationCompanySeqs", $sCooperationCompanySeq );
-		$oPdoStatement->execute ();
-		$oCompany = $oPdoStatement->fetch();
-		return $oCompany;
+		if ($oPdoStatement->execute()) {
+			$oCompany = $oPdoStatement->fetch();
+			return $oCompany;
+		}
+		return false;
 	}
 	
 	public function update($sCooperationCompanySeq, $sName) {
 	    $sQuery = ' UPDATE
                         tCooperationCompany
                     SET
-                        sCooperationCompanySeq = :sCooperationCompanySeq,
                         sName = :sName
                     WHERE
                         sCooperationCompanySeq = :sCooperationCompanySeq';
@@ -47,6 +48,6 @@ class CooperationCompanyDAO {
 	    
 	    $oPdoStatement->bindValue ( ":sCooperationCompanySeq", $sCooperationCompanySeq );
 	    $oPdoStatement->bindValue ( ":sName", $sName );
-	    $oPdoStatement->execute ();
+	    $oPdoStatement->execute();
 	}
 }

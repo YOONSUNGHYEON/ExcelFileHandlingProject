@@ -44,7 +44,8 @@ $(function() {
 					error: function() {
 						alert("통신이 실패했습니다.");
 					},
-					success: function(uploadResponse) {						
+					success: function(uploadResponse) {	
+						console.log(uploadResponse);					
 						if (uploadResponse["code"] == 400) {
 							alert("엑셀 파일을 업로드 해주세요");
 						} else if (uploadResponse["code"] == 401) {

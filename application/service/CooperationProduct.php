@@ -16,57 +16,78 @@ class CooperationProductService {
 		$this->oReader = ReaderEntityFactory::createReaderFromFile ( Type::XLSX );
 		$this->oCooperationProductDAO = new CooperationProductDAO ();
 		$this->oCooperationCompanyDAO = new CooperationCompanyDAO ();
+		
+		$oPdo = new pdoConnect ();
+		$this->pdo = $oPdo->connectPdo ();
+	}
+	public function checkCooperationCompanyModification($sName, $sRecentName) {
+		if ($sName != $sRecentName) {
+			return true;
+		}
+		return false;
+	}
+	public function checkCooperationProductModification($oCooperationProduct, $oRecentCooperationProduct) {
+		if ($oCooperationProduct ['$nCategorySeq'] != $oRecentCooperationProduct ['$nCategorySeq'] || $oCooperationProduct ['$nCategorySeq'] != $oRecentCooperationProduct ['$nCategorySeq'] || $oCooperationProduct ['$sName'] != $oRecentCooperationProduct ['$sName'] || $oCooperationProduct ['$sURL'] != $oRecentCooperationProduct ['$sURL'] || $oCooperationProduct ['$nPrice'] != $oRecentCooperationProduct ['$nPrice'] || $oCooperationProduct ['$nMobilePrice'] != $oRecentCooperationProduct ['$nMobilePrice'] || $oCooperationProduct ['$dtInputDate'] != $oRecentCooperationProduct ['$dtInputDate']) {
+			return true;
+		}
+
+		return false;
 	}
 	public function upload($sFilePath) {
 		$this->oReader->open ( $sFilePath );
 		$aResponse = array ();
 		$aErrorRow = array ();
 		$successRowCount = 0;
+
 		foreach ( $this->oReader->getSheetIterator () as $oSheet ) {
 			$count = 1;
-			foreach ( $oSheet->getRowIterator () as $oRow ) {
-				$aValue = $oRow->toArray ();
-				if ($count == 1) {
-					if (count ( $aValue ) != 9 || '협력사 명' != $aValue [0] || '협력사 코드' != $aValue [1] || '협력사 상품코드 ' != $aValue [2] || '대분류' != $aValue [3] 
-							|| '협력사 상품명 ' != $aValue [4] || '협력사 url' != $aValue [5] || '가격' != $aValue [6] || '모바일가격' != $aValue [7] || '입력일' != $aValue [8]) {
-						break;
-					}
-				} else {
-					try {
-						$sCooperationProductSeq = $aValue [2];
-						$sCooperationCompanySeq = $aValue [1];
-						$sCooperationCompanyName = $aValue [0];
-						$nCategorySeq = $aValue [3];
-						$sName = $aValue [4];
-						$sURL = $aValue [5];
-						$nPrice = $aValue [6];
-						$nMobilePrice = $aValue [7];
-						$dtInputDate = $aValue [8];
-						$oCooperationProduct = new CooperationProduct ( $sCooperationProductSeq, $sCooperationCompanySeq, $nCategorySeq, $sName, $sURL, $nPrice, $nMobilePrice, $dtInputDate );
-						$oTempCooperationProduct = $this->oCooperationProductDAO->findByCooperationProductSeq ( $sCooperationProductSeq );
-						$oTempCooperationCompany = $this->oCooperationCompanyDAO->findByCooperationCompanySeq ( $sCooperationCompanySeq );
-
-						if ($oTempCooperationCompany == null) {
-							$this->oCooperationCompanyDAO->save ( $sCooperationCompanySeq, $sCooperationCompanyName );
-						} else {
-							$this->oCooperationCompanyDAO->update ( $sCooperationCompanySeq, $sCooperationCompanyName );
+			try {
+				$this->pdo->beginTransaction ();
+				foreach ( $oSheet->getRowIterator () as $oRow ) {
+					$aValue = $oRow->toArray ();
+					if ($count == 1) {
+						if (count ( $aValue ) != 9 || '협력사 명' != $aValue [0] || '협력사 코드' != $aValue [1] || '협력사 상품코드 ' != $aValue [2] || '대분류' != $aValue [3] || '협력사 상품명 ' != $aValue [4] || '협력사 url' != $aValue [5] || '가격' != $aValue [6] || '모바일가격' != $aValue [7] || '입력일' != $aValue [8]) {
+							break;
 						}
+					} else {
+						try {
+							$sCooperationProductSeq = testInput ( $aValue [2] );
+							$sCooperationCompanySeq = testInput ( $aValue [1] );
+							$sCooperationCompanyName = testInput ( $aValue [0] );
+							$nCategorySeq = testInput ( $aValue [3] );
+							$sName = testInput ( $aValue [4] );
+							$sURL = testInput ( $aValue [5] );
+							$nPrice = testInput ( $aValue [6] );
+							$nMobilePrice = testInput ( $aValue [7] );
+							$dtInputDate = testInput ( date_format ( $aValue [8], "Y-m-d" ) );
 
-						if ($oTempCooperationProduct == null) {
-							$this->oCooperationProductDAO->save ( $oCooperationProduct );
-						} else {
-							$this->oCooperationProductDAO->update ( $oCooperationProduct );
+							$oCooperationProduct = new CooperationProduct ( $sCooperationProductSeq, $sCooperationCompanySeq, $nCategorySeq, $sName, $sURL, $nPrice, $nMobilePrice, $dtInputDate );
+							if ($this->oCooperationCompanyDAO->findByCooperationCompanySeq ( $sCooperationCompanySeq ) == null) {
+								$this->oCooperationCompanyDAO->save ( $sCooperationCompanySeq, $sCooperationCompanyName );
+							} else if (checkCooperationCompanyModification ( $oTempCooperationCompany ['sName'], $sCooperationCompanyName )) {
+								$this->oCooperationCompanyDAO->update ( $sCooperationCompanySeq, $sCooperationCompanyName );
+							}
+
+							if ($this->oCooperationProductDAO->findByCooperationProductSeq ( $sCooperationProductSeq ) == null) {
+								$this->oCooperationProductDAO->save ( $oCooperationProduct );
+							} else if (checkCooperationProductModification ( $oTempCooperationProduct, $oCooperationProduct )) {
+								$this->oCooperationProductDAO->update ( $oCooperationProduct );
+							}
+							$successRowCount ++;
+						} catch ( Exception $e ) {
+							$aErrorRow [] = $sCooperationProductSeq;
 						}
-						$successRowCount++;
-						$count ++;
-					} catch ( Exception $e ) {
-						$aErrorRow[] = $sCooperationProductSeq;
 					}
+					if(count % 100 == 0) {
+						$this->pdo->commit ();
+					}
+					$count ++;
 				}
-				
+			} catch ( PDOException $e ) {
+				$this->pdo->rollBack ();
 			}
 		}
-		if($successRowCount == 0){
+		if ($successRowCount == 0) {
 			$aResponse ['code'] = 402;
 		} else {
 			$aResponse ['errorRow'] = $aErrorRow;

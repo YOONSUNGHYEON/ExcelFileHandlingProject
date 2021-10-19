@@ -7,7 +7,7 @@ $oCooperationProductDAO = new CooperationProductDAO ();
 save ( $oCooperationProductDAO );
 function save($oCooperationProductDAO) {
 	try {
-		$oCooperationProduct = new CooperationProduct ( '1', '1', 1, 'test', 'test', 0, 0 );
+		$oCooperationProduct = new CooperationProduct ( '1', '1', 1, 'test', 'test', 0, 0,20 );
 		$oCooperationProductDAO->save ( $oCooperationProduct );
 	} catch ( Exception $e ) {
 		echo 'Message: ' . $e->getMessage ();
