@@ -8,7 +8,8 @@ class CategoryDAO {
 	}
 	public function findAll() {
 		$sQuery = ' SELECT
-                        *
+						nCategorySeq,
+                        sName
                     FROM
                         tCategory';
 

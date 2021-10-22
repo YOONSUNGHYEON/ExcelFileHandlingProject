@@ -58,8 +58,9 @@ $(function() {
 							}							
 						} else {
 							let msg = uploadResponse["successRowCount"] + "개의 데이터를 업로드 성공했습니다. \n업로드 실패한 데이터는 " + uploadResponse['errorRowCount'] + "개 입니다. \n업로드 실패 데이터 seq 목록\n";
-							for(let i=0; i<uploadResponse['errorRow'].length; i++) {
-								msg += uploadResponse['errorRow'][i] + "\n";
+							let errorRow = uploadResponse['errorRow'];
+							for(let i=0; i<errorRow.length; i++) {
+								msg += errorRow[i]['seq'] + "\n";
 							}
 							alert(msg);
 						}

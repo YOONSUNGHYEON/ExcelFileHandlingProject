@@ -3,7 +3,7 @@
 class StandardProductDAO {
 
 	// tStandardProductList에 StandardProductSeq와 같은 row 찾기
-	public function findByStandardProductSeq($oPdo, $nStandardProductSeq) {
+	public function findByStandardProductSeq($oPDO, $nStandardProductSeq) {
 		$sQuery = ' SELECT
                         *
                     FROM
@@ -13,10 +13,10 @@ class StandardProductDAO {
                     WHERE
                         SPL.nStandardProductSeq = :nStandardProductSeq';
 
-		$oPdoStatement = $oPdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":nStandardProductSeq", $nStandardProductSeq );
-		if ($oPdoStatement->execute ()) {
-			$oProduct = $oPdoStatement->fetch ();
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
+		$oPDOStatement->bindValue ( ":nStandardProductSeq", $nStandardProductSeq );
+		if ($oPDOStatement->execute ()) {
+			$oProduct = $oPDOStatement->fetch ();
 			return $oProduct;
 		}
 		return false;
@@ -24,14 +24,14 @@ class StandardProductDAO {
 
 	/**
 	 * 
-	 * @param unknown $oPdo
+	 * @param unknown $oPDO
 	 * @param unknown $nStartCount
 	 * @param unknown $nLimitCount
 	 * @param unknown $nCategorySeq
 	 * @param unknown $aSortPriority
 	 * @return array|boolean
 	 */
-	public function findByCategorySeqOrderByASC($oPdo, $nStartCount, $nLimitCount, $nCategorySeq, $aSortPriority){
+	public function findByCategorySeqOrderByASC($oPDO, $nStartCount, $nLimitCount, $nCategorySeq, $aSortPriority){
 		$sQuery = ' SELECT
                        	SPL.*,
 						CG.sName as sCategoryName
@@ -48,13 +48,13 @@ class StandardProductDAO {
 					' LIMIT
                         :nLimitCount
                     OFFSET :nStartCount';
-		$oPdoStatement = $oPdo->prepare ($sQuery);
-		$oPdoStatement->bindValue (':nCategorySeq', $nCategorySeq);
-		$oPdoStatement->bindValue (':nLimitCount', $nLimitCount);
-		$oPdoStatement->bindValue (':nStartCount', $nStartCount);
+		$oPDOStatement = $oPDO->prepare ($sQuery);
+		$oPDOStatement->bindValue (':nCategorySeq', $nCategorySeq);
+		$oPDOStatement->bindValue (':nLimitCount', $nLimitCount);
+		$oPDOStatement->bindValue (':nStartCount', $nStartCount);
 		$aStandardProduct = array ();
-		if ($oPdoStatement->execute ()) {
-			while ( $oStandardProductRow = $oPdoStatement->fetch ( PDO::FETCH_ASSOC ) ) {
+		if ($oPDOStatement->execute ()) {
+			while ( $oStandardProductRow = $oPDOStatement->fetch ( PDO::FETCH_ASSOC ) ) {
 				array_push ( $aStandardProduct, $oStandardProductRow );
 			}
 			return $aStandardProduct;
@@ -63,7 +63,7 @@ class StandardProductDAO {
 	}
 	
 	
-	public function findByCategorySeqOrderByDESC($oPdo,$nStartCount, $nLimitCount, $nCategorySeq, $aSortPriority){
+	public function findByCategorySeqOrderByDESC($oPDO,$nStartCount, $nLimitCount, $nCategorySeq, $aSortPriority){
 		$sQuery = ' SELECT
                        	SPL.*,
 						CG.sName as sCategoryName
@@ -80,13 +80,13 @@ class StandardProductDAO {
 		' LIMIT
                         :nLimitCount
                     OFFSET :nStartCount';
-		$oPdoStatement = $oPdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
-		$oPdoStatement->bindValue ( ":nLimitCount", $nLimitCount );
-		$oPdoStatement->bindValue ( ":nStartCount", $nStartCount );
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
+		$oPDOStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
+		$oPDOStatement->bindValue ( ":nLimitCount", $nLimitCount );
+		$oPDOStatement->bindValue ( ":nStartCount", $nStartCount );
 		$aStandardProduct = array ();
-		if ($oPdoStatement->execute ()) {
-			while ( $oStandardProductRow = $oPdoStatement->fetch ( PDO::FETCH_ASSOC ) ) {
+		if ($oPDOStatement->execute ()) {
+			while ( $oStandardProductRow = $oPDOStatement->fetch ( PDO::FETCH_ASSOC ) ) {
 				array_push ( $aStandardProduct, $oStandardProductRow );
 			}
 			return $aStandardProduct;
@@ -95,7 +95,7 @@ class StandardProductDAO {
 	}
 	
 	
-	public function save($oPdo, $nStandardProductSeq, $nCategorySeq, $sName, $nLowestPrice, $nMobileLowestPrice, $nAveragePrice, $nCooperationCompayCount) {
+	public function save($oPDO, $nStandardProductSeq, $nCategorySeq, $sName, $nLowestPrice, $nMobileLowestPrice, $nAveragePrice, $nCooperationCompayCount) {
 		$sQuery = ' INSERT INTO tStandardProductList
                                	(nStandardProductSeq,
 								 nCategorySeq,
@@ -111,17 +111,17 @@ class StandardProductDAO {
 								 :nMobileLowestPrice,
 								 :nAveragePrice,
 								 :nCooperationCompayCount)';
-		$oPdoStatement = $oPdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":nStandardProductSeq", $nStandardProductSeq );
-		$oPdoStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
-		$oPdoStatement->bindValue ( ":sName", $sName );
-		$oPdoStatement->bindValue ( ":nLowestPrice", $nLowestPrice );
-		$oPdoStatement->bindValue ( ":nMobileLowestPrice", $nMobileLowestPrice );
-		$oPdoStatement->bindValue ( ":nAveragePrice", $nAveragePrice );
-		$oPdoStatement->bindValue ( ":nCooperationCompayCount", $nCooperationCompayCount );
-		return $oPdoStatement->execute ();
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
+		$oPDOStatement->bindValue ( ":nStandardProductSeq", $nStandardProductSeq );
+		$oPDOStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
+		$oPDOStatement->bindValue ( ":sName", $sName );
+		$oPDOStatement->bindValue ( ":nLowestPrice", $nLowestPrice );
+		$oPDOStatement->bindValue ( ":nMobileLowestPrice", $nMobileLowestPrice );
+		$oPDOStatement->bindValue ( ":nAveragePrice", $nAveragePrice );
+		$oPDOStatement->bindValue ( ":nCooperationCompayCount", $nCooperationCompayCount );
+		return $oPDOStatement->execute ();
 	}
-	public function update($oPdo, $nStandardProductSeq, $nCategorySeq, $sName, $nLowestPrice, $nMobileLowestPrice, $nAveragePrice, $nCooperationCompayCount) {
+	public function update($oPDO, $nStandardProductSeq, $nCategorySeq, $sName, $nLowestPrice, $nMobileLowestPrice, $nAveragePrice, $nCooperationCompayCount) {
 		$sQuery = ' UPDATE
                         tStandardProductList
                     SET
@@ -133,27 +133,27 @@ class StandardProductDAO {
 						nCooperationCompayCount =:nCooperationCompayCount
                     WHERE
                         nStandardProductSeq = :nStandardProductSeq';
-		$oPdoStatement = $oPdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":nStandardProductSeq", $nStandardProductSeq );
-		$oPdoStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
-		$oPdoStatement->bindValue ( ":sName", $sName );
-		$oPdoStatement->bindValue ( ":nLowestPrice", $nLowestPrice );
-		$oPdoStatement->bindValue ( ":nMobileLowestPrice", $nMobileLowestPrice );
-		$oPdoStatement->bindValue ( ":nAveragePrice", $nAveragePrice );
-		$oPdoStatement->bindValue ( ":nCooperationCompayCount", $nCooperationCompayCount );
-		$oPdoStatement->execute ();
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
+		$oPDOStatement->bindValue ( ":nStandardProductSeq", $nStandardProductSeq );
+		$oPDOStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
+		$oPDOStatement->bindValue ( ":sName", $sName );
+		$oPDOStatement->bindValue ( ":nLowestPrice", $nLowestPrice );
+		$oPDOStatement->bindValue ( ":nMobileLowestPrice", $nMobileLowestPrice );
+		$oPDOStatement->bindValue ( ":nAveragePrice", $nAveragePrice );
+		$oPDOStatement->bindValue ( ":nCooperationCompayCount", $nCooperationCompayCount );
+		$oPDOStatement->execute ();
 	}
-	public function countByCategorySeq($oPdo, $nCategorySeq) {
+	public function countByCategorySeq($oPDO, $nCategorySeq) {
 		$sQuery = ' SELECT
                         COUNT(*) AS CNT
                     FROM
                         tStandardProductList
                     WHERE
                         nCategorySeq = :nCategorySeq';
-		$oPdoStatement = $oPdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
-		if($oPdoStatement->execute ()) {
-			$aStandardProductRow = $oPdoStatement->fetch();
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
+		$oPDOStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
+		if($oPDOStatement->execute ()) {
+			$aStandardProductRow = $oPDOStatement->fetch();
 			return $aStandardProductRow ['CNT'];
 		}
 		return false;

@@ -12,27 +12,16 @@ class CooperationProductService {
 	private $oCooperationProductDAO;
 	private $oCooperationCompanyDAO;
 	private $oReader;
+	private $oPDO;
 	function __construct() {
 		$this->oReader = ReaderEntityFactory::createReaderFromFile ( Type::XLSX );
 		$this->oCooperationProductDAO = new CooperationProductDAO ();
 		$this->oCooperationCompanyDAO = new CooperationCompanyDAO ();
 		
-		$oPdo = new pdoConnect ();
-		$this->pdo = $oPdo->connectPdo ();
+		$oPDOConnect = new pdoConnect ();
+		$this->oPDO = $oPDOConnect->connectPdo ();
 	}
-	public function checkCooperationCompanyModification($sName, $sRecentName) {
-		if ($sName != $sRecentName) {
-			return true;
-		}
-		return false;
-	}
-	public function checkCooperationProductModification($oCooperationProduct, $oRecentCooperationProduct) {
-		if ($oCooperationProduct ['$nCategorySeq'] != $oRecentCooperationProduct ['$nCategorySeq'] || $oCooperationProduct ['$nCategorySeq'] != $oRecentCooperationProduct ['$nCategorySeq'] || $oCooperationProduct ['$sName'] != $oRecentCooperationProduct ['$sName'] || $oCooperationProduct ['$sURL'] != $oRecentCooperationProduct ['$sURL'] || $oCooperationProduct ['$nPrice'] != $oRecentCooperationProduct ['$nPrice'] || $oCooperationProduct ['$nMobilePrice'] != $oRecentCooperationProduct ['$nMobilePrice'] || $oCooperationProduct ['$dtInputDate'] != $oRecentCooperationProduct ['$dtInputDate']) {
-			return true;
-		}
 
-		return false;
-	}
 	public function upload($sFilePath) {
 		$this->oReader->open ( $sFilePath );
 		$aResponse = array ();
@@ -42,49 +31,53 @@ class CooperationProductService {
 		foreach ( $this->oReader->getSheetIterator () as $oSheet ) {
 			$count = 1;
 			try {
-				$this->pdo->beginTransaction ();
+				
 				foreach ( $oSheet->getRowIterator () as $oRow ) {
 					$aValue = $oRow->toArray ();
 					if ($count == 1) {
+						$this->oPDO->beginTransaction ();
 						if (count ( $aValue ) != 9 || '협력사 명' != $aValue [0] || '협력사 코드' != $aValue [1] || '협력사 상품코드 ' != $aValue [2] || '대분류' != $aValue [3] || '협력사 상품명 ' != $aValue [4] || '협력사 url' != $aValue [5] || '가격' != $aValue [6] || '모바일가격' != $aValue [7] || '입력일' != $aValue [8]) {
 							break;
 						}
 					} else {
 						try {
-							$sCooperationProductSeq = testInput ( $aValue [2] );
-							$sCooperationCompanySeq = testInput ( $aValue [1] );
-							$sCooperationCompanyName = testInput ( $aValue [0] );
-							$nCategorySeq = testInput ( $aValue [3] );
-							$sName = testInput ( $aValue [4] );
-							$sURL = testInput ( $aValue [5] );
-							$nPrice = testInput ( $aValue [6] );
-							$nMobilePrice = testInput ( $aValue [7] );
-							$dtInputDate = testInput ( date_format ( $aValue [8], "Y-m-d" ) );
+							$sCooperationProductSeq = $this->testInput ( $aValue [2] );
+							$sCooperationCompanySeq = $this->testInput ( $aValue [1] );
+							$sCooperationCompanyName = $this->testInput ( $aValue [0] );
+							$nCategorySeq = $this->testInput ( $aValue [3] );
+							$sName = $this->testInput ( $aValue [4] );
+							$sURL = $this->testInput ( $aValue [5] );
+							$nPrice = $this->testInput ( $aValue [6] );
+							$nMobilePrice = $this->testInput ( $aValue [7] );
+							$dtInputDate = $this->testInput ( date_format ( $aValue [8], "Y-m-d" ) );
 
 							$oCooperationProduct = new CooperationProduct ( $sCooperationProductSeq, $sCooperationCompanySeq, $nCategorySeq, $sName, $sURL, $nPrice, $nMobilePrice, $dtInputDate );
-							if ($this->oCooperationCompanyDAO->findByCooperationCompanySeq ( $sCooperationCompanySeq ) == null) {
-								$this->oCooperationCompanyDAO->save ( $sCooperationCompanySeq, $sCooperationCompanyName );
-							} else if (checkCooperationCompanyModification ( $oTempCooperationCompany ['sName'], $sCooperationCompanyName )) {
-								$this->oCooperationCompanyDAO->update ( $sCooperationCompanySeq, $sCooperationCompanyName );
+							if ($this->oCooperationCompanyDAO->findByCooperationCompanySeq ($this->oPDO, $sCooperationCompanySeq ) == null) {
+								$this->oCooperationCompanyDAO->save ($this->oPDO, $sCooperationCompanySeq, $sCooperationCompanyName );
+							} else  {
+								$this->oCooperationCompanyDAO->update ($this->oPDO, $sCooperationCompanySeq, $sCooperationCompanyName );
 							}
-
-							if ($this->oCooperationProductDAO->findByCooperationProductSeq ( $sCooperationProductSeq ) == null) {
-								$this->oCooperationProductDAO->save ( $oCooperationProduct );
-							} else if (checkCooperationProductModification ( $oTempCooperationProduct, $oCooperationProduct )) {
-								$this->oCooperationProductDAO->update ( $oCooperationProduct );
+							$oTempCooperationProduct = $this->oCooperationProductDAO->findByCooperationProductSeq ($this->oPDO, $sCooperationProductSeq );
+							if ($oTempCooperationProduct == null) {
+								$this->oCooperationProductDAO->save ($this->oPDO, $oCooperationProduct );
+							} else  {
+								$this->oCooperationProductDAO->update ($this->oPDO, $oCooperationProduct );
 							}
 							$successRowCount ++;
 						} catch ( Exception $e ) {
 							$aErrorRow [] = $sCooperationProductSeq;
 						}
 					}
-					if(count % 100 == 0) {
-						$this->pdo->commit ();
+					if(count % 1000 == 0) {
+						$this->oPDO->commit ();
+						$this->oPDO->beginTransaction ();
 					}
 					$count ++;
 				}
+				$this->oPDO->commit ();
 			} catch ( PDOException $e ) {
-				$this->pdo->rollBack ();
+				$this->oPDO->rollBack ();
+				$this->oPDO->beginTransaction ();
 			}
 		}
 		if ($successRowCount == 0) {
@@ -99,9 +92,11 @@ class CooperationProductService {
 		return $aResponse;
 	}
 	public function download($aCooperationProduct) {
-		$dtCreateDate = date ( "Y-m-d H:i:s", time () );
+		$dtCreateDate = date ( "Ymd", time () );
+		$dtCreateTime = date ( "His", time () );
+		$aResponse = array ();
 		try {
-			$sFilePath = getcwd () . '/' . $dtCreateDate . 'cooperationProduct.xlsx';
+			$sFilePath = getcwd () . '/' . $dtCreateDate . "_" . $dtCreateTime . '_협력사상품.xlsx';
 			$oWriter = WriterEntityFactory::createXLSXWriter ();
 			$oWriter->openToFile ( $sFilePath );
 			$aDataList = [ 
@@ -140,27 +135,32 @@ class CooperationProductService {
 				$aSingleRow = WriterEntityFactory::createRow ( $aCell );
 				$oWriter->addRow ( $aSingleRow );
 			}
+			$aResponse ['code'] = 200;
+			$aResponse ['path'] = $sFilePath;
 			$oWriter->close ();
-			return 200;
 		} catch ( Exception $e ) {
-			return 400;
+			$aResponse ['code'] = 400;
+			$aResponse ['error'] = $e->getMessage ();
+			$aResponse ['path'] = $sFilePath;
+		} finally {
+			return $aResponse;
 		}
 	}
 	function findListByCategorySeq($sOption, $nCurrentPage, $nOrder, $nCategorySeq) {
-		$nCooperationProductListLength = $this->oCooperationProductDAO->countByCategorySeq ( $nCategorySeq );
+		$nCooperationProductListLength = $this->oCooperationProductDAO->countByCategorySeq ($this->oPDO,  $nCategorySeq );
 		$aPageData = paging ( $nCooperationProductListLength, $nCurrentPage );
-		$aCooperationProduct = $this->oCooperationProductDAO->findByCategorySeqOrderByNameASC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+		$aCooperationProduct = $this->oCooperationProductDAO->findByCategorySeqOrderByNameASC ($this->oPDO, $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
 		if ($sOption == 1) { // 상품 코드
 			if ($nOrder == 1) {
-				$aCooperationProduct = $this->oCooperationProductDAO->findByCategorySeqOrderByNameASC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+				$aCooperationProduct = $this->oCooperationProductDAO->findByCategorySeqOrderByNameASC ( $this->oPDO, $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
 			} else {
-				$aCooperationProduct = $this->oCooperationProductDAO->findByCategorySeqOrderByNameDESC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+				$aCooperationProduct = $this->oCooperationProductDAO->findByCategorySeqOrderByNameDESC ( $this->oPDO, $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
 			}
 		} else if ($sOption == 2) { // 상품 명
 			if ($nOrder == 1) {
-				$aCooperationProduct = $this->oCooperationProductDAO->findByCategorySeqOrderByInputDateASC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+				$aCooperationProduct = $this->oCooperationProductDAO->findByCategorySeqOrderByInputDateASC ( $this->oPDO, $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
 			} else {
-				$aCooperationProduct = $this->oCooperationProductDAO->findByCategorySeqOrderByInputDateDESC ( $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
+				$aCooperationProduct = $this->oCooperationProductDAO->findByCategorySeqOrderByInputDateDESC ( $this->oPDO, $aPageData ['nStartCount'], $aPageData ['nBlockCount'], $nCategorySeq );
 			}
 		}
 		$aCooperationProduct ['nCurrentCount'] = count ( $aCooperationProduct );

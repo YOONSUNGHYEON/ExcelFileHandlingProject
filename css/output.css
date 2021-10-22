@@ -77,3 +77,11 @@ table th a {
 	height:15px;
 	width: 15px;
 }
+
+.content {
+	width: 1900px;
+	height: 700px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 50px;
+}

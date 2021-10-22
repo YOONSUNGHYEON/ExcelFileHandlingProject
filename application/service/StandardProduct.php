@@ -1,8 +1,10 @@
 <?php
 require_once '/media/sf_ExcelFileHandlingProject/include/paging.php';
 require_once '/media/sf_ExcelFileHandlingProject/application/dao/StandardProduct.php';
+require_once '/media/sf_ExcelFileHandlingProject/application/dto/StandardProduct.php';
 require_once '/media/sf_ExcelFileHandlingProject/src/Spout/Autoloader/autoload.php';
 require_once '/media/sf_ExcelFileHandlingProject/include/pdoConnect.php';
+
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Type;
@@ -17,20 +19,32 @@ class StandardProductService {
 		$oPdo = new pdoConnect ();
 		$this->pdo = $oPdo->connectPdo ();
 	}
+	/* 
+	 * 업로드된 엑셀 파일 칼럼 유효성 확인하기
+	 */
+	function checkColumn($aColumn) {
+		if(count ( $aColumn ) != 7){
+			return false;
+		} else if('상품코드' != $aValue [0] || '카테고리' != $aValue [1] || '상품명' != $aValue [2] || '최저가' != $aValue [3] || '모바일 최저가' != $aValue [4] || '평균가' != $aValue [5] || '업체수' != $aValue [6]) {
+			return false;
+		}
+		return true;
+	}
+	
 	function upload($sFilePath) {
 		$this->oReader->open ( $sFilePath );
 		$aResponse = array ();
 		$aErrorRow = array ();
 		$successRowCount = 0;
-		
+
 		foreach ( $this->oReader->getSheetIterator () as $oSheet ) {
 			$count = 1;
 			try {
-				$this->pdo->beginTransaction ();
 				foreach ( $oSheet->getRowIterator () as $oRow ) {
 					$aValue = $oRow->toArray ();
 					if ($count == 1) {
-						if (count ( $aValue ) != 7 || ('상품코드' != $aValue [0] || '카테고리' != $aValue [1] || '상품명' != $aValue [2] || '최저가' != $aValue [3] || '모바일 최저가' != $aValue [4] || '평균가' != $aValue [5] || '업체수' != $aValue [6])) {
+						$this->pdo->beginTransaction ();
+						if (!checkColumn($aValue)) {
 							break;
 						}
 					} else {
@@ -48,22 +62,29 @@ class StandardProductService {
 								} else {
 									$this->oStandardProductDAO->update ( $this->pdo, $nStandardProductSeq, $nCategorySeq, $sName, $nLowestPrice, $nMobileLowestPrice, $nAveragePrice, $nCooperationCompayCount );
 								}
+								
 							}
-							
 						} catch ( Exception $e ) {
-							$aErrorRow [] = [
+							$aErrorRow [] = [ 
 									seq => $nStandardProductSeq,
 									message => $e->getMessage ()
 							];
 						}
 					}
-					$successRowCount++;
-					$count ++;
-					
+					if (1000 == $count) {
+						$this->pdo->commit ();
+						$this->pdo->beginTransaction ();
+					}
+					$successRowCount ++;
+					$count++;
 				}
-				$this->pdo->commit ();
+				
 			} catch ( PDOException $e ) {
 				$this->pdo->rollBack ();
+				$this->pdo->beginTransaction ();
+			}
+			finally {
+				$this->pdo->commit ();
 			}
 		}
 
@@ -150,7 +171,9 @@ class StandardProductService {
 		$dtCreateTime = date ( "His", time () );
 		$aResponse = array ();
 		try {
-			$sFilePath = getcwd () . '/' . $dtCreateDate . "_" . $dtCreateTime . '_기준상품.xlsx';
+			$sFolderName = getcwd () . '/';
+			$sFileName = $dtCreateDate . "_" . $dtCreateTime . '_기준상품.xlsx';
+			$sFilePath = $sFolderName . $sFileName;
 			$oWriter = WriterEntityFactory::createXLSXWriter ();
 			$oWriter->openToFile ( $sFilePath );
 			$aDataList = [ 
@@ -190,8 +213,10 @@ class StandardProductService {
 				$oWriter->addRow ( $aSingleRow );
 			}
 			$aResponse ['code'] = 200;
-			$aResponse ['path'] = $sFilePath;
+			$aResponse ['fileName'] = $sFileName;
+			$aResponse ['filePath'] = $sFilePath;
 			$oWriter->close ();
+			//moveFile ( '/media/sf_ExcelFileHandlingProject/', '20211020_135438_기준상품.xlsx', '/media/sf_ExcelFileHandlingProject/20211020_135438_기준상품.xlsx');
 		} catch ( Exception $e ) {
 			$aResponse ['code'] = 400;
 			$aResponse ['error'] = $e->getMessage ();
@@ -200,4 +225,6 @@ class StandardProductService {
 			return $aResponse;
 		}
 	}
+
+
 }

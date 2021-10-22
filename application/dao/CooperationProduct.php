@@ -1,13 +1,8 @@
 <?php
-require_once $_SERVER ["DOCUMENT_ROOT"] . '/ExcelFileHandlingProject/include/pdoConnect.php';
-require_once $_SERVER ["DOCUMENT_ROOT"] . '/ExcelFileHandlingProject/application/dto/CooperationProduct.php';
+
+
 class CooperationProductDAO {
-	private $pdo;
-	function __construct() {
-		$oPdo = new pdoConnect ();
-		$this->pdo = $oPdo->connectPdo ();
-	}
-	public function findByCooperationProductSeq($sCooperationProductSeq) {
+	public function findByCooperationProductSeq($oPDO, $sCooperationProductSeq) {
 		$sQuery = ' SELECT
                         *
                     FROM
@@ -16,32 +11,39 @@ class CooperationProductDAO {
                     WHERE
                         sCooperationProductSeq = :sCooperationProductSeq';
 
-		$oPdoStatement = $this->pdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":sCooperationProductSeq", $sCooperationProductSeq );
-		if ($oPdoStatement->execute ()) {
-			$oProduct = $oPdoStatement->fetch ();
-			return $oProduct;
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
+		$oPDOStatement->bindValue ( ":sCooperationProductSeq", $sCooperationProductSeq );
+		if (! $oPDOStatement->execute ()) {
+			throw new PDOException ( '쿼리 실행 실패' );
 		}
-		return false;
+		$oProduct = $oPDOStatement->fetch ();
+		return $oProduct;
 	}
-	public function countByCategorySeq($nCategorySeq) {
+	public function countByCategorySeq($oPDO, $nCategorySeq) {
 		$sQuery = ' SELECT
-                        count(*)
+                        COUNT(sCooperationProductSeq) AS CNT
                     FROM
                         tCooperationProductList
                     WHERE
                         nCategorySeq = :nCategorySeq';
-		$oPdoStatement = $this->pdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
-		if ($oPdoStatement->execute ()) {
-			$aStandardProductRow = $oPdoStatement->fetch ();
-			return $aStandardProductRow ['count(*)'];
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
+		$oPDOStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
+		if (! $oPDOStatement->execute ()) {
+			throw new PDOException ( '쿼리 실행 실패' );
 		}
-		return false;
+		$aStandardProductRow = $oPDOStatement->fetch ();
+		return $aStandardProductRow ['CNT'];
 	}
-	public function findByCategorySeqOrderByNameASC($nStartCount, $nLimitCount, $nCategorySeq) {
+	public function findByCategorySeqOrderByNameASC($oPDO, $nStartCount, $nLimitCount, $nCategorySeq) {
 		$sQuery = ' SELECT
-                       CPL.*, CC.sName as "sCooperationCompanyName"
+                       CPL.sCooperationProductSeq,
+					   CPL.sName,
+					   CPL.sCooperationCompanySeq,
+					   CPL.sURL,
+					   CPL.nPrice,
+					   CPL.nMobilePrice,
+					   CPL.dtInputDate,
+					   CC.sName AS sCooperationCompanyName
                     FROM
                         tCooperationProductList CPL
                         LEFT OUTER JOIN tCooperationCompany CC 
@@ -55,22 +57,29 @@ class CooperationProductDAO {
                         :nLimitCount
                     OFFSET :nStartCount';
 
-		$oPdoStatement = $this->pdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
-		$oPdoStatement->bindValue ( ":nLimitCount", $nLimitCount );
-		$oPdoStatement->bindValue ( ":nStartCount", $nStartCount );
-		if ($oPdoStatement->execute ()) {
-			$aStandardProduct = array ();
-			while ( $oStandardProductRow = $oPdoStatement->fetch ( PDO::FETCH_ASSOC ) ) {
-				array_push ( $aStandardProduct, $oStandardProductRow );
-			}
-			return $aStandardProduct;
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
+		$oPDOStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
+		$oPDOStatement->bindValue ( ":nLimitCount", $nLimitCount );
+		$oPDOStatement->bindValue ( ":nStartCount", $nStartCount );
+		if (! $oPDOStatement->execute ()) {
+			throw new PDOException ( '쿼리 실행 실패' );
 		}
-		return false;
+		$aStandardProduct = array ();
+		while ( $oStandardProductRow = $oPDOStatement->fetch ( PDO::FETCH_ASSOC ) ) {
+			array_push ( $aStandardProduct, $oStandardProductRow );
+		}
+		return $aStandardProduct;
 	}
-	public function findByCategorySeqOrderByNameDESC($nStartCount, $nLimitCount, $nCategorySeq) {
+	public function findByCategorySeqOrderByNameDESC($oPDO, $nStartCount, $nLimitCount, $nCategorySeq) {
 		$sQuery = ' SELECT
-                       CPL.*, CC.sName as "sCooperationCompanyName"
+                       CPL.sCooperationProductSeq,
+					   CPL.sName,
+					   CPL.sCooperationCompanySeq,
+					   CPL.sURL,
+					   CPL.nPrice,
+					   CPL.nMobilePrice,
+					   CPL.dtInputDate,
+					   CC.sName AS sCooperationCompanyName
                     FROM
                         tCooperationProductList CPL
                         LEFT OUTER JOIN tCooperationCompany CC
@@ -84,22 +93,29 @@ class CooperationProductDAO {
                         :nLimitCount
                     OFFSET :nStartCount';
 
-		$oPdoStatement = $this->pdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
-		$oPdoStatement->bindValue ( ":nLimitCount", $nLimitCount );
-		$oPdoStatement->bindValue ( ":nStartCount", $nStartCount );
-		if ($oPdoStatement->execute ()) {
-			$aStandardProduct = array ();
-			while ( $oStandardProductRow = $oPdoStatement->fetch ( PDO::FETCH_ASSOC ) ) {
-				array_push ( $aStandardProduct, $oStandardProductRow );
-			}
-			return $aStandardProduct;
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
+		$oPDOStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
+		$oPDOStatement->bindValue ( ":nLimitCount", $nLimitCount );
+		$oPDOStatement->bindValue ( ":nStartCount", $nStartCount );
+		if (!$oPDOStatement->execute ()) {
+			throw new PDOException ( '쿼리 실행 실패' );
 		}
-		return false;
+		$aStandardProduct = array ();
+		while ( $oStandardProductRow = $oPDOStatement->fetch ( PDO::FETCH_ASSOC ) ) {
+			array_push ( $aStandardProduct, $oStandardProductRow );
+		}
+		return $aStandardProduct;
 	}
-	public function findByCategorySeqOrderByInputDateASC($nStartCount, $nLimitCount, $nCategorySeq) {
+	public function findByCategorySeqOrderByInputDateASC($oPDO, $nStartCount, $nLimitCount, $nCategorySeq) {
 		$sQuery = ' SELECT
-                       CPL.*, CC.sName as "sCooperationCompanyName"
+                       CPL.sCooperationProductSeq,
+					   CPL.sName,
+					   CPL.sCooperationCompanySeq,
+					   CPL.sURL,
+					   CPL.nPrice,
+					   CPL.nMobilePrice,
+					   CPL.dtInputDate,
+					   CC.sName AS sCooperationCompanyName
                     FROM
                         tCooperationProductList CPL
                         LEFT OUTER JOIN tCooperationCompany CC
@@ -113,22 +129,29 @@ class CooperationProductDAO {
                         :nLimitCount
                     OFFSET :nStartCount';
 
-		$oPdoStatement = $this->pdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
-		$oPdoStatement->bindValue ( ":nLimitCount", $nLimitCount );
-		$oPdoStatement->bindValue ( ":nStartCount", $nStartCount );
-		if ($oPdoStatement->execute ()) {
-			$aStandardProduct = array ();
-			while ( $oStandardProductRow = $oPdoStatement->fetch ( PDO::FETCH_ASSOC ) ) {
-				array_push ( $aStandardProduct, $oStandardProductRow );
-			}
-			return $aStandardProduct;
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
+		$oPDOStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
+		$oPDOStatement->bindValue ( ":nLimitCount", $nLimitCount );
+		$oPDOStatement->bindValue ( ":nStartCount", $nStartCount );
+		if (!$oPDOStatement->execute ()) {
+			throw new PDOException ( '쿼리 실행 실패' );
 		}
-		return false;
+		$aStandardProduct = array ();
+		while ( $oStandardProductRow = $oPDOStatement->fetch ( PDO::FETCH_ASSOC ) ) {
+			array_push ( $aStandardProduct, $oStandardProductRow );
+		}
+		return $aStandardProduct;
 	}
-	public function findByCategorySeqOrderByInputDateDESC($nStartCount, $nLimitCount, $nCategorySeq) {
+	public function findByCategorySeqOrderByInputDateDESC($oPDO, $nStartCount, $nLimitCount, $nCategorySeq) {
 		$sQuery = ' SELECT
-                       CPL.*, CC.sName as "sCooperationCompanyName"
+                       CPL.sCooperationProductSeq,
+					   CPL.sName,
+					   CPL.sCooperationCompanySeq,
+					   CPL.sURL,
+					   CPL.nPrice,
+					   CPL.nMobilePrice,
+					   CPL.dtInputDate,
+					   CC.sName AS sCooperationCompanyName
                     FROM
                         tCooperationProductList CPL
                         LEFT OUTER JOIN tCooperationCompany CC
@@ -142,22 +165,22 @@ class CooperationProductDAO {
                         :nLimitCount
                     OFFSET :nStartCount';
 
-		$oPdoStatement = $this->pdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
-		$oPdoStatement->bindValue ( ":nLimitCount", $nLimitCount );
-		$oPdoStatement->bindValue ( ":nStartCount", $nStartCount );
-		$oPdoStatement->execute ();
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
+		$oPDOStatement->bindValue ( ":nCategorySeq", $nCategorySeq );
+		$oPDOStatement->bindValue ( ":nLimitCount", $nLimitCount );
+		$oPDOStatement->bindValue ( ":nStartCount", $nStartCount );
+		$oPDOStatement->execute ();
 
-		if ($oPdoStatement->execute ()) {
-			$aStandardProduct = array ();
-			while ( $oStandardProductRow = $oPdoStatement->fetch ( PDO::FETCH_ASSOC ) ) {
-				array_push ( $aStandardProduct, $oStandardProductRow );
-			}
-			return $aStandardProduct;
+		if (!$oPDOStatement->execute ()) {
+			throw new PDOException ( '쿼리 실행 실패' );
 		}
-		return false;
+		$aStandardProduct = array ();
+		while ( $oStandardProductRow = $oPDOStatement->fetch ( PDO::FETCH_ASSOC ) ) {
+			array_push ( $aStandardProduct, $oStandardProductRow );
+		}
+		return $aStandardProduct;
 	}
-	public function save($oCooperationProduct) {
+	public function save($oPDO, $oCooperationProduct) {
 		$sQuery = ' INSERT INTO tCooperationProductList
                                	(sCooperationProductSeq,
                                  sCooperationCompanySeq,
@@ -175,18 +198,21 @@ class CooperationProductDAO {
 								 :nPrice,
 								 :nMobilePrice,
 								 :dtInputDate)';
-		$oPdoStatement = $this->pdo->prepare ( $sQuery );
-		$oPdoStatement->bindValue ( ":sCooperationProductSeq", $oCooperationProduct->getCooperationProductSeq () );
-		$oPdoStatement->bindValue ( ":sCooperationCompanySeq", $oCooperationProduct->getCooperationCompanySeq () );
-		$oPdoStatement->bindValue ( ":nCategorySeq", $oCooperationProduct->getCategorySeq () );
-		$oPdoStatement->bindValue ( ":sName", $oCooperationProduct->getName () );
-		$oPdoStatement->bindValue ( ":sURL", $oCooperationProduct->getURL () );
-		$oPdoStatement->bindValue ( ":nPrice", $oCooperationProduct->getPrice () );
-		$oPdoStatement->bindValue ( ":nMobilePrice", $oCooperationProduct->getMobilePrice () );
-		$oPdoStatement->bindValue ( ":dtInputDate", $oCooperationProduct->getInputDate () );
-		$oPdoStatement->execute ();
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
+		$oPDOStatement->bindValue ( ":sCooperationProductSeq", $oCooperationProduct->getCooperationProductSeq () );
+		$oPDOStatement->bindValue ( ":sCooperationCompanySeq", $oCooperationProduct->getCooperationCompanySeq () );
+		$oPDOStatement->bindValue ( ":nCategorySeq", $oCooperationProduct->getCategorySeq () );
+		$oPDOStatement->bindValue ( ":sName", $oCooperationProduct->getName () );
+		$oPDOStatement->bindValue ( ":sURL", $oCooperationProduct->getURL () );
+		$oPDOStatement->bindValue ( ":nPrice", $oCooperationProduct->getPrice () );
+		$oPDOStatement->bindValue ( ":nMobilePrice", $oCooperationProduct->getMobilePrice () );
+		$oPDOStatement->bindValue ( ":dtInputDate", $oCooperationProduct->getInputDate () );
+		if(!$oPDOStatement->execute ()) {
+			throw new PDOException ( '쿼리 실행 실패' );
+		}
+		
 	}
-	public function update($oCooperationProduct) {
+	public function update($oPDO, $oCooperationProduct) {
 		$sQuery = ' UPDATE
                         tCooperationProductList
                     SET
@@ -199,16 +225,18 @@ class CooperationProductDAO {
                         dtInputDate = :dtInputDate
                     WHERE
                         sCooperationProductSeq = :sCooperationProductSeq';
-		$oPdoStatement = $this->pdo->prepare ( $sQuery );
+		$oPDOStatement = $oPDO->prepare ( $sQuery );
 
-		$oPdoStatement->bindValue ( ":sCooperationCompanySeq", $oCooperationProduct->getCooperationCompanySeq () );
-		$oPdoStatement->bindValue ( ":nCategorySeq", $oCooperationProduct->getCategorySeq () );
-		$oPdoStatement->bindValue ( ":sName", $oCooperationProduct->getName () );
-		$oPdoStatement->bindValue ( ":sURL", $oCooperationProduct->getURL () );
-		$oPdoStatement->bindValue ( ":nPrice", $oCooperationProduct->getPrice () );
-		$oPdoStatement->bindValue ( ":nMobilePrice", $oCooperationProduct->getMobilePrice () );
-		$oPdoStatement->bindValue ( ":sCooperationProductSeq", $oCooperationProduct->getCooperationProductSeq () );
-		$oPdoStatement->bindValue ( ":dtInputDate", $oCooperationProduct->getInputDate () );
-		$oPdoStatement->execute ();
+		$oPDOStatement->bindValue ( ":sCooperationCompanySeq", $oCooperationProduct->getCooperationCompanySeq () );
+		$oPDOStatement->bindValue ( ":nCategorySeq", $oCooperationProduct->getCategorySeq () );
+		$oPDOStatement->bindValue ( ":sName", $oCooperationProduct->getName () );
+		$oPDOStatement->bindValue ( ":sURL", $oCooperationProduct->getURL () );
+		$oPDOStatement->bindValue ( ":nPrice", $oCooperationProduct->getPrice () );
+		$oPDOStatement->bindValue ( ":nMobilePrice", $oCooperationProduct->getMobilePrice () );
+		$oPDOStatement->bindValue ( ":sCooperationProductSeq", $oCooperationProduct->getCooperationProductSeq () );
+		$oPDOStatement->bindValue ( ":dtInputDate", $oCooperationProduct->getInputDate () );
+		if(!$oPDOStatement->execute ()) {
+			throw new PDOException ( '쿼리 실행 실패' );
+		}
 	}
 }

@@ -22,7 +22,8 @@ class CooperationCompanyDAO {
 	
 	public function findByCooperationCompanySeq($sCooperationCompanySeq) {
 		$sQuery = ' SELECT
-                        *
+                        sCooperationCompanySeq,
+                        sName
                     FROM
                         tCooperationCompany 
                     WHERE

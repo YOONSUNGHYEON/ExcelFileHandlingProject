@@ -7,7 +7,7 @@ function download(productType) {
 	let productDataObj = {};
 	//productType = 1 기준 상품
 	//productType = 2 협력사 상품
-
+	
 	if (productType == 1) {
 		for (let i = 1; i <= $('#standardProductTable tbody tr').length; i++) {
 			let tempQuery = "#standardProductTbody > tr:nth-child(" + i + ")>";
@@ -35,27 +35,33 @@ function download(productType) {
 			productDataObj = {};
 		}
 	}
-
-	let jsonData = JSON.stringify(productArray);
-	$.ajax({
-		url: "mapper.php?method=download",
-		type: "POST",
-		dataType: "json",
-		data: {
-			productType: productType,
-			productArrObj: jsonData
-		}, beforeSend: function() {
-			$("#progressStatus").show();
-		}, complete: function() {
-			$("#progressStatus").hide();
-		}, success: function(downloadResponse) {
-			if (downloadResponse['code'] == 200) {
-				alert("다운로드 성공했습니다.\n(저장 경로 : " + downloadResponse['path'] + " )");
-			} else if (downloadResponse['code'] == 400) {
-				alert("다운로드 실패했습니다.\n(실패 원인 : " + downloadResponse['error'] + ")");
+	if (productArray.length > 0) {
+		let jsonData = JSON.stringify(productArray);
+		$.ajax({
+			url: "mapper.php?method=download",
+			type: "POST",
+			dataType: "json",
+			data: {
+				productType: productType,
+				productArrObj: jsonData
+			}, beforeSend: function() {
+				$("#progressStatus").show();
+			}, complete: function() {
+				$("#progressStatus").hide();
+			}, success: function(downloadResponse) {
+				if (downloadResponse['code'] == 200) {
+					location.href = 'include/MoveFile.php?fileName='+downloadResponse['fileName']+'&filePath='+downloadResponse['filePath'];
+					alert("다운로드 성공했습니다");
+				} else if (downloadResponse['code'] == 400) {
+					alert("다운로드 실패했습니다.\n(실패 원인 : " + downloadResponse['error'] + ")");
+				}
 			}
-		}
-	})
+		})
+	}
+	else {
+		alert('다운 받을 자료가 없습니다.');
+	}
+
 }
 function findCategoryList() {
 	$.ajax({
@@ -101,6 +107,7 @@ function findCooperationProductList(page, option, order) {
 			order: order, //오름차순 = 1, 내림차순=2;
 		},
 		success: function(tableData) {
+			console.log(tableData);
 			let cooperationProductThead = "";
 			cooperationProductThead += '<th>협력사 명</th>';
 			cooperationProductThead += '<th>협력사 코드</th>';
